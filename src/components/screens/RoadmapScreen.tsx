@@ -112,9 +112,11 @@ function buildMilestones(profile: StudentProfile): Milestone[] {
 export function RoadmapScreen({
   profile,
   onToggleMilestone,
+  onBack,
 }: {
   profile: StudentProfile;
   onToggleMilestone: (id: string) => void;
+  onBack?: () => void;
 }) {
   const milestones = buildMilestones(profile);
   const done = milestones.filter((m) => profile.completedMilestones.includes(m.id)).length;
@@ -123,7 +125,18 @@ export function RoadmapScreen({
   return (
     <div className="p-4 space-y-4">
       <div>
-        <h2 className="text-sm font-bold text-slate-900">Your step-by-step roadmap</h2>
+        <h2 className="text-sm font-bold text-slate-900 flex items-center justify-between">
+          Your step-by-step roadmap
+          {onBack ? (
+            <button
+              type="button"
+              onClick={onBack}
+              className="text-[9px] text-indigo-600 font-semibold hover:text-indigo-800 transition mt-1"
+            >
+              Back
+            </button>
+          ) : null}
+        </h2>
         <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
           Built from your stage, saved routes and interests. Ticks are saved on this device, so your progress stays.
         </p>
