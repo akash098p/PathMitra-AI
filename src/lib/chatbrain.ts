@@ -136,6 +136,375 @@ function scholarshipAnswer(profile: StudentProfile): LocalAnswer {
   return { reply, source: 'brain-cache:scholarships', usedLinks: list.map((s) => s.portal.url) };
 }
 
+function escapeRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// ----------------------------------------------------------------------------
+// Built-in conversational skills: greetings, capabilities, thanks, goodbye.
+// These never need the network — instant, warm replies for students testing
+// the app ("hello?", "thanks!") instead of falling through to the LLM.
+// ----------------------------------------------------------------------------
+
+function smallTalkAnswer(q: string, profile: StudentProfile): LocalAnswer | null {
+  const saidName = profile.name ? `, ${profile.name.split(' ')[0]}` : '';
+  const trimmed = q.trim();
+
+  if (/^(hi|hii+|hello|hey|namaste|namaskar|good\s?(morning|afternoon|evening)|yo|sup)\b[!.\s]*$/.test(trimmed)) {
+    return {
+      reply: [
+        `👋 **Namaste${saidName}! I am PathMitra, your education-to-career guide.**`,
+        '',
+        bullet('Ask me to compare two routes — for example "diploma vs B.Tech in computer science"'),
+        bullet('Ask about any exam, scholarship, government or private job, or skill to learn'),
+        bullet('Open the Explore tab for streams, the Guide tab for exams, fees, jobs and scholarships'),
+        '',
+        'Try: "Which is better, a diploma or B.Tech in computer science?"',
+      ].join('\n'),
+      source: 'brain-cache:greeting',
+      usedLinks: [],
+    };
+  }
+
+  if (
+    q.includes('what can you do') || q.includes('what can u do') || q.includes('how can you help') ||
+    q.includes('how do you help') || q.includes('your features') || q.includes('what do you do') ||
+    (q.includes('help') && q.length < 30) || q.includes('who are you') || q.includes('about yourself') ||
+    q.includes('introduce yourself')
+  ) {
+    return {
+      reply: [
+        '🤖 **Here is what I can do for you:**',
+        '',
+        bullet('**Compare routes** — "PCM vs diploma", "ITI vs polytechnic", with fees and time to first salary'),
+        bullet('**Explain exams** — JEE, NEET, CUET, JEXPO, JELET, NDA and 25+ more, with official portals'),
+        bullet('**Find money** — scholarships and fee waivers your family can actually apply for'),
+        bullet('**Show jobs** — government and private careers with real starting pay bands'),
+        bullet('**Plan skills** — what to learn this month, with a first project to build'),
+        '',
+        'Ask me anything — for example "Can I do B.Tech without JEE?"',
+      ].join('\n'),
+      source: 'brain-cache:capabilities',
+      usedLinks: [],
+    };
+  }
+
+  if (/thank|thx|dhanyavad|shukriya|bahut (accha|badia)|great answer|awesome|nice (answer|work)|well done|good (job|answer|bot)/.test(q)) {
+    return {
+      reply: [
+        `😊 **You are most welcome${saidName}!**`,
+        '',
+        'All the best with your studies. One small tip: finish one chapter or one project milestone today — consistency beats intensity.',
+        '',
+        'Ask me anything else — exams, fees, jobs, scholarships — I am right here.',
+      ].join('\n'),
+      source: 'brain-cache:thanks',
+      usedLinks: [],
+    };
+  }
+
+  if (/^(bye|goodbye|good night|see you|alvida|phir milenge|ok bye|okay bye)[!.\s]*$/.test(trimmed)) {
+    return {
+      reply: [
+        `👋 **Phir milenge${saidName}! Good luck with your preparation.**`,
+        '',
+        'Your profile and roadmap checklist are saved — come back anytime and we will continue where you left off.',
+      ].join('\n'),
+      source: 'brain-cache:goodbye',
+      usedLinks: [],
+    };
+  }
+
+  if (q.includes('love this') || q.includes('best app') || q.includes('very helpful') || q.includes('really helpful')) {
+    return {
+      reply: [
+        `💛 **That means a lot${saidName} — thank you!**`,
+        '',
+        'If it helped you, share PathMitra with one friend who is also confused about streams. And keep asking — the more specific your question, the better my answer.',
+      ].join('\n'),
+      source: 'brain-cache:feedback',
+      usedLinks: [],
+    };
+  }
+
+  return null;
+}
+
+// ----------------------------------------------------------------------------
+// Virtual compare targets: real degrees students ask about that are NOT their
+// own pathway entry (B.Tech, MBBS, CA). Each carries the honest numbers for a
+// fair side-by-side and ends in real guidance, never a bare exam card.
+// ----------------------------------------------------------------------------
+
+interface VirtualTarget {
+  id: string;
+  label: string;
+  aliases: string[];
+  duration: string;
+  entry: string;
+  govtCost: string;
+  privateCost: string;
+  strength: string;
+  watchOut: string;
+  verdict: string;
+  links: Link[];
+}
+
+const VIRTUAL_TARGETS: VirtualTarget[] = [
+  {
+    id: 'btech',
+    label: 'B.Tech / B.E. (4-year engineering degree)',
+    aliases: ['b.tech', 'btech', 'b tech', 'engineering degree', 'computer science engineering', 'cse degree', 'b.e.', 'be degree'],
+    duration: '4 years after Class 12 (or 3 years via diploma lateral entry)',
+    entry: 'Class 12 PCM + JEE Main / state CET, OR 3-year diploma + lateral entry test (no JEE needed)',
+    govtCost: '₹15,000 – ₹1.5 lakh per year (NITs / state govt colleges)',
+    privateCost: '₹1 – ₹3.5 lakh per year (private colleges; top private higher)',
+    strength: 'widest-recognised engineering degree; unlocks GATE, PSUs, IT placements, MS abroad',
+    watchOut: 'heaviest total cost and 6 years Class 10 → B.Tech; college quality decides placements',
+    verdict: 'B.Tech first if the family can fund 4 years and the student enjoys Maths — it keeps PSU, GATE and top IT doors open',
+    links: [
+      { label: 'JEE Main official portal (NTA)', url: 'https://jeemain.nta.nic.in' },
+      { label: 'AICTE (approval & lateral entry norms)', url: 'https://www.aicte-india.org' },
+    ],
+  },
+  {
+    id: 'mbbs',
+    label: 'MBBS (5.5-year medical degree)',
+    aliases: ['mbbs', 'medical degree', 'doctor course', 'mbbs degree'],
+    duration: '5.5 years (4.5 + 1-year internship)',
+    entry: 'Class 12 PCB + NEET-UG rank; no lateral entry route',
+    govtCost: '₹10,000 – ₹1 lakh per year (govt medical college)',
+    privateCost: '₹8 – ₹25 lakh per year (private / deemed)',
+    strength: 'most respected, most secure career in India; government doctor posts in every district',
+    watchOut: 'needs Biology + very high NEET rank; longest route to first full salary (age 24+)',
+    verdict: 'MBBS first only with PCB in Class 12 and genuine interest in medicine — it is the longest and most competitive route',
+    links: [{ label: 'NEET-UG official portal (NTA)', url: 'https://neet.nta.nic.in' }],
+  },
+  {
+    id: 'ca',
+    label: 'CA — Chartered Accountancy',
+    aliases: ['ca ', 'chartered account', ' ca', 'c.a.', 'ca foundation', 'accountancy'],
+    duration: '4.5–5 years alongside/after Class 12 (Foundation → Inter → Final + articleship)',
+    entry: 'Class 12 any stream + CA Foundation (ICAI); no JEE/NEET needed',
+    govtCost: 'ICAI fees are modest (tens of thousands total), coaching extra',
+    privateCost: 'coaching ₹30,000 – ₹1 lakh+ per level in private institutes',
+    strength: 'highest-paid commerce career; every company needs CAs; practice or corporate both open',
+    watchOut: 'pass percentages are low at Final level; articleship years pay a small stipend',
+    verdict: 'CA first for commerce students who enjoy accounts and can sustain 4–5 years of exam grind',
+    links: [{ label: 'ICAI (CA official body)', url: 'https://www.icai.org' }],
+  },
+];
+
+function findAllVirtualTargets(q: string): VirtualTarget[] {
+  const hits: Array<{ target: VirtualTarget; pos: number }> = [];
+  for (const target of VIRTUAL_TARGETS) {
+    for (const alias of target.aliases) {
+      if (alias.trim().length < 2) continue;
+      const idx = q.indexOf(alias);
+      if (idx >= 0) {
+        hits.push({ target, pos: idx });
+        break;
+      }
+    }
+  }
+  hits.sort((x, y) => x.pos - y.pos);
+  const seen = new Set<string>();
+  const ordered: VirtualTarget[] = [];
+  for (const h of hits) {
+    if (!seen.has(h.target.id)) {
+      seen.add(h.target.id);
+      ordered.push(h.target);
+    }
+  }
+  return ordered;
+}
+
+// Short aliases (pcm, iti, ca) match on word boundaries only, so "position"
+// never triggers ITI and "science" never triggers a stray short code.
+function aliasHit(q: string, alias: string): boolean {
+  if (alias.length > 4) return q.includes(alias);
+  return new RegExp(`\b${escapeRegExp(alias)}\b`).test(q);
+}
+
+function findPathwaysInQuery(q: string): string[] {
+  const found: Array<{ id: string; pos: number }> = [];
+  for (const p of PATHWAYS) {
+    let pos = -1;
+    const names = [p.name.toLowerCase(), p.shortName.toLowerCase()];
+    for (const name of names) {
+      if (name.length < 3) continue;
+      const idx = q.indexOf(name);
+      if (idx >= 0 && (pos < 0 || idx < pos)) pos = idx;
+    }
+    // Keys must match real PathwayId values. Degree targets students ask about
+    // (B.Tech, MBBS, CA) are NOT pathways — they live in VIRTUAL_TARGETS and
+    // are paired with pathways by comparisonAnswer, never by this map.
+    const extra: Record<string, string[]> = {
+      polytechnic: ['diploma', 'diploma in computer', 'poly'],
+      'science-pcm': ['pcm'],
+      'science-pcb': ['pcb'],
+      'commerce-ip': ['commerce', 'b.com', 'bcom'],
+      'arts-humanities': ['arts stream', 'humanities'],
+      iti: ['iti'],
+      bca: ['bca', 'computer applications'],
+      paramedical: ['nursing', 'paramedical', 'gnm', 'anm'],
+    };
+    for (const alias of extra[p.id] ?? []) {
+      if (aliasHit(q, alias) && (pos < 0 || q.indexOf(alias) < pos)) pos = q.indexOf(alias);
+    }
+    if (pos >= 0) found.push({ id: p.id, pos });
+  }
+  return found.sort((a, b) => a.pos - b.pos).map((f) => f.id);
+}
+
+function comparisonAnswer(q: string, profile: StudentProfile): LocalAnswer | null {
+  const wantsCompare =
+    q.includes(' vs ') || q.includes(' vs.') || q.includes(' v/s ') || q.includes('versus') ||
+    q.includes('which is better') || q.includes('which one is better') ||
+    q.includes('compare') || q.includes('comparison') || q.includes('difference between') || q.includes('diff between') ||
+    (q.includes(' or ') && (q.includes('better') || q.includes('choose') || q.includes('should i') || q.includes('suggest') || q.includes('recommend')));
+  if (!wantsCompare) return null;
+
+  const ids = [...new Set(findPathwaysInQuery(q))];
+  const virtuals = findAllVirtualTargets(q);
+
+  // Two real pathways, e.g. "polytechnic vs ITI".
+  if (ids.length >= 2) return pathwayVsPathway(ids[0], ids[1], profile);
+  // One pathway + one degree target — the most common question in the app,
+  // e.g. "diploma in computer science or b tech in computer science?".
+  if (ids.length === 1 && virtuals.length >= 1) return mixedComparisonAnswer(ids[0], virtuals[0], q, profile);
+  // Two degree targets, e.g. "B.Tech or MBBS — which is better?".
+  if (ids.length === 0 && virtuals.length >= 2) return virtualVsVirtual(virtuals[0], virtuals[1], profile);
+  return null;
+}
+
+function pathwayVsPathway(aId: string, bId: string, profile: StudentProfile): LocalAnswer | null {
+  const a = PATHWAYS.find((p) => p.id === aId);
+  const b = PATHWAYS.find((p) => p.id === bId);
+  if (!a || !b) return null;
+
+  const firstName = profile.name ? profile.name.split(' ')[0] : '';
+  const reply = [
+    `⚖️ **${a.name} vs ${b.name} — honest side-by-side**`,
+    '',
+    `- **Duration:** ${a.durationLabel} vs ${b.durationLabel}`,
+    `- **Entry after:** ${a.eligibility} vs ${b.eligibility}`,
+    `- **Government cost:** ${a.cost.government} vs ${b.cost.government}`,
+    `- **Private cost:** ${a.cost.private} vs ${b.cost.private}`,
+    `- **${a.name} strength:** ${a.pros[0]}`,
+    `- **${b.name} strength:** ${b.pros[0]}`,
+    `- **${a.name} watch-out:** ${a.cons[0]}`,
+    `- **${b.name} watch-out:** ${b.cons[0]}`,
+    '',
+    `**My take${firstName ? ` for ${firstName}` : ''}:** pick **${a.name}** if ${a.bestFor.toLowerCase()}; pick **${b.name}** if ${b.bestFor.toLowerCase()}. Compare the full table on the Compare tab before deciding.`,
+    '',
+    profileSummary(profile) ? `Your profile so far: ${profileSummary(profile)}` : '',
+    linkBlock([...a.links, ...b.links]),
+  ].filter(Boolean).join('\n');
+  return {
+    reply,
+    source: 'brain-cache:comparison',
+    usedLinks: [...a.links, ...b.links].map((l) => l.url),
+  };
+}
+
+// Pathway vs degree target, e.g. Polytechnic Diploma vs B.Tech. This is the
+// comparison students ask about most, so it carries branch-specific guidance
+// (computer science questions get a CS verdict) and the lateral-entry bridge.
+function mixedComparisonAnswer(
+  pathwayId: string,
+  v: VirtualTarget,
+  q: string,
+  profile: StudentProfile,
+): LocalAnswer | null {
+  const p = PATHWAYS.find((x) => x.id === pathwayId);
+  if (!p) return null;
+  const firstName = profile.name ? profile.name.split(' ')[0] : '';
+  const lines = [
+    `⚖️ **${p.shortName} vs ${v.label} — honest side-by-side**`,
+    '',
+    `- **Duration:** ${p.durationLabel} vs ${v.duration}`,
+    `- **Entry after:** ${p.eligibility} vs ${v.entry}`,
+    `- **Government cost:** ${p.cost.government} vs ${v.govtCost}`,
+    `- **Private cost:** ${p.cost.private} vs ${v.privateCost}`,
+    `- **${p.shortName} strength:** ${p.pros[0]}`,
+    `- **${v.label} strength:** ${v.strength}`,
+    `- **${p.shortName} watch-out:** ${p.cons[0]}`,
+    `- **${v.label} watch-out:** ${v.watchOut}`,
+  ];
+  if (pathwayId === 'polytechnic' && v.id === 'btech') {
+    if (/(computer|cse|software|information technology)/.test(q)) {
+      lines.push(
+        '',
+        '- **For computer science specifically:** a CSE diploma puts you in coding labs from year one with a technician or junior-dev income by about age 19; B.Tech CSE costs more years and money but unlocks product-company placements, GATE/PSU seats and MS abroad, which all require a degree.',
+      );
+    }
+    lines.push(
+      '',
+      '- **Middle path many students take:** 3-year diploma, then lateral entry straight into B.Tech 2nd year through the state test (for example JELET in West Bengal) — no JEE Main needed, and you save a full year.',
+    );
+  }
+  lines.push(
+    '',
+    `**My take${firstName ? ` for ${firstName}` : ''}:** ${v.verdict}; choose **${p.name}** if ${p.bestFor.toLowerCase()}.`,
+    '',
+    profileSummary(profile) ? `Your profile so far: ${profileSummary(profile)}` : '',
+    linkBlock([...p.links, ...v.links]),
+  );
+  return {
+    reply: lines.filter(Boolean).join('\n'),
+    source: 'brain-cache:comparison',
+    usedLinks: [...p.links, ...v.links].map((l) => l.url),
+  };
+}
+
+function virtualVsVirtual(a: VirtualTarget, b: VirtualTarget, profile: StudentProfile): LocalAnswer {
+  const firstName = profile.name ? profile.name.split(' ')[0] : '';
+  const reply = [
+    `⚖️ **${a.label} vs ${b.label} — honest side-by-side**`,
+    '',
+    `- **Duration:** ${a.duration} vs ${b.duration}`,
+    `- **Entry:** ${a.entry} vs ${b.entry}`,
+    `- **Government cost:** ${a.govtCost} vs ${b.govtCost}`,
+    `- **Private cost:** ${a.privateCost} vs ${b.privateCost}`,
+    `- **${a.label} strength:** ${a.strength}`,
+    `- **${b.label} strength:** ${b.strength}`,
+    `- **Watch-outs:** ${a.watchOut}; meanwhile ${b.watchOut.charAt(0).toLowerCase() + b.watchOut.slice(1)}`,
+    '',
+    `**My take${firstName ? ` for ${firstName}` : ''}:** ${a.verdict}; on the other side, ${b.verdict.charAt(0).toLowerCase() + b.verdict.slice(1)}.`,
+    '',
+    profileSummary(profile) ? `Your profile so far: ${profileSummary(profile)}` : '',
+    linkBlock([...a.links, ...b.links]),
+  ].filter(Boolean).join('\n');
+  return {
+    reply,
+    source: 'brain-cache:comparison',
+    usedLinks: [...a.links, ...b.links].map((l) => l.url),
+  };
+}
+
+function examVsExam(aId: string, bId: string): LocalAnswer | null {
+  const a = EXAMS.find((e) => e.id === aId);
+  const b = EXAMS.find((e) => e.id === bId);
+  if (!a || !b) return null;
+  const reply = [
+    `⚖️ **${a.shortName} vs ${b.shortName} — they serve different goals**`,
+    '',
+    `- **Conducted by:** ${a.conductedBy} vs ${b.conductedBy}`,
+    `- **Who can apply:** ${a.eligibility} vs ${b.eligibility}`,
+    `- **What it gives:** ${a.grants} vs ${b.grants}`,
+    `- **Typical cycle:** ${a.cycleWindow} vs ${b.cycleWindow}`,
+    `- **Prep effort:** roughly ${a.prepMonths} months vs roughly ${b.prepMonths} months`,
+    '',
+    `**My take:** prepare for **${a.shortName}** if ${a.grants.charAt(0).toLowerCase() + a.grants.slice(1)} is your goal; prepare for **${b.shortName}** if ${b.grants.charAt(0).toLowerCase() + b.grants.slice(1)} is. Confirm this year's dates on the official portals before applying.`,
+    linkBlock([
+      { label: `${a.shortName} official portal`, url: a.officialUrl },
+      { label: `${b.shortName} official portal`, url: b.officialUrl },
+    ]),
+  ].join('\n');
+  return { reply, source: 'brain-cache:comparison', usedLinks: [a.officialUrl, b.officialUrl] };
+}
+
 function lateralEntryAnswer(): LocalAnswer {
   const poly = PATHWAYS.find((x) => x.id === 'polytechnic');
   const jelet = EXAMS.find((e) => e.id === 'jelet');
@@ -158,7 +527,16 @@ export function answerLocally(question: string, profile: StudentProfile): LocalA
   const q = question.toLowerCase();
   const queryTokens = tokens(question);
 
-  // 1. High-frequency intent rules first.
+  // 0. Small talk and capability questions — answer instantly, no match needed.
+  const smallTalk = smallTalkAnswer(q, profile);
+  if (smallTalk) return smallTalk;
+
+  // 1. Comparison questions ("X vs Y", "which is better") come before single
+  // matches so a two-option query never collapses into one exam card.
+  const comparison = comparisonAnswer(q, profile);
+  if (comparison) return comparison;
+
+  // 2. High-frequency intent rules next.
   const lateralIntent =
     (q.includes('lateral') || q.includes('2nd year') || q.includes('second year') || q.includes('without jee')) &&
     (q.includes('diploma') || q.includes('polytechnic') || q.includes('b.tech') || q.includes('btech'));
@@ -168,23 +546,27 @@ export function answerLocally(question: string, profile: StudentProfile): LocalA
     return scholarshipAnswer(profile);
   }
 
-  // 2. Exam match by name and short name.
+  // 3. Exam match by name and short name. Short-name boost applies only to
+  // standalone mentions (word-boundary) so "science" never triggers "sc" and
+  // "computer" never triggers a stray substring hit.
   let bestExam = { id: '', score: 0 };
   for (const exam of EXAMS) {
     const haystack = `${exam.name} ${exam.shortName} ${exam.category} ${exam.grants}`;
-    const score = scoreMatch(haystack, queryTokens) + (q.includes(exam.shortName.toLowerCase()) ? 6 : 0);
+    const shortMentioned = new RegExp(`\\b${escapeRegExp(exam.shortName.toLowerCase())}\\b`).test(q);
+    const score = scoreMatch(haystack, queryTokens) + (shortMentioned ? 6 : 0);
     if (score > bestExam.score) bestExam = { id: exam.id, score };
   }
-  if (bestExam.score >= 2) {
+  if (bestExam.score >= 3) {
     const answer = examAnswer(bestExam.id);
     if (answer) return answer;
   }
 
-  // 3. Pathway match.
+  // 4. Pathway match.
   let bestPathway = { id: '', score: 0 };
   for (const p of PATHWAYS) {
     const haystack = `${p.name} ${p.shortName} ${p.bestFor} ${p.syllabus.join(' ')}`;
-    const score = scoreMatch(haystack, queryTokens) + (q.includes(p.shortName.toLowerCase()) ? 6 : 0);
+    const shortMentioned = p.shortName.length > 3 && q.includes(p.shortName.toLowerCase());
+    const score = scoreMatch(haystack, queryTokens) + (shortMentioned ? 6 : 0);
     if (score > bestPathway.score) bestPathway = { id: p.id, score };
   }
   if (bestPathway.score >= 2) {
