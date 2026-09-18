@@ -17,10 +17,12 @@ export function ExploreScreen({
   profile,
   onOpenPathway,
   onToggleSaved,
+  onBack,
 }: {
   profile: StudentProfile;
   onOpenPathway: (pathwayId: string) => void;
   onToggleSaved: (pathwayId: string) => void;
+  onBack?: () => void;
 }) {
   const qualificationMeta = QUALIFICATIONS.find((q) => q.id === profile.qualification);
   const ranked = scorePathways(profile, PATHWAYS.length);
