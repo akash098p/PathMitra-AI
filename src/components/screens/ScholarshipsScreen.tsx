@@ -11,7 +11,13 @@ import { Bullet, Card, Chip, KeyValue, LinkList, SectionTitle, Tag } from '@/com
 // student's stage, with document checklists so applications do not stall.
 // ============================================================================
 
-export function ScholarshipsScreen({ profile }: { profile: StudentProfile }) {
+export function ScholarshipsScreen({
+  profile,
+  onBack,
+}: {
+  profile: StudentProfile;
+  onBack?: () => void;
+}) {
   const [scope, setScope] = useState<'all' | 'central' | 'state' | 'institute'>('all');
 
   const matched = profile.qualification ? scholarshipsForQualification(profile.qualification) : SCHOLARSHIPS;
