@@ -10,14 +10,25 @@ import { Bullet, Card, Chip, KeyValue, SectionTitle, Tag } from '@/components/ui
 // by when, and what happens if it does not work out.
 // ============================================================================
 
-export function ScenarioScreen() {
+export function ScenarioScreen({ onBack }: { onBack?: () => void }) {
   const [activeId, setActiveId] = useState(SCENARIOS[0].id);
   const scenario = SCENARIOS.find((s) => s.id === activeId) ?? SCENARIOS[0];
 
   return (
     <div className="p-4 space-y-4">
       <div>
-        <h2 className="text-sm font-bold text-slate-900">What if I took the other road?</h2>
+        <h2 className="text-sm font-bold text-slate-900">
+          What if I took the other road?
+          {onBack ? (
+            <button
+              type="button"
+              onClick={onBack}
+              className="ml-2 text-[9px] text-indigo-600 font-semibold hover:text-indigo-800 transition"
+            >
+              Back
+            </button>
+          ) : null}
+        </h2>
         <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
           The same student, the same Class 10 result — but a different route. Costs are indicative ranges across
           government and private seats, so treat them as honest brackets rather than exact quotes.
