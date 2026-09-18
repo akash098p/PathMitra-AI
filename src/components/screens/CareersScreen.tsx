@@ -17,7 +17,13 @@ const DEMAND_TONE: Record<string, 'emerald' | 'indigo' | 'amber' | 'rose'> = {
   competitive: 'rose',
 };
 
-export function CareersScreen({ profile }: { profile: StudentProfile }) {
+export function CareersScreen({
+  profile,
+  onBack,
+}: {
+  profile: StudentProfile;
+  onBack?: () => void;
+}) {
   const [sector, setSector] = useState<'all' | 'govt' | 'private'>('all');
 
   const visible = CAREERS.filter((c) => {
