@@ -1,0 +1,136 @@
+import type { Opportunity } from '@/lib/types';
+
+// ============================================================================
+// Beyond the classroom: apprenticeships, internships, olympiads and
+// competitions that a school or diploma student can actually enter.
+// ============================================================================
+
+export const OPPORTUNITIES: Opportunity[] = [
+  {
+    id: 'nats-apprenticeship',
+    name: 'NATS — National Apprenticeship Training Scheme',
+    type: 'apprenticeship',
+    provider: 'BOAT / BOPT under AICTE, Ministry of Education',
+    eligibility: 'Diploma holders and graduates of AICTE-approved institutions',
+    stipend: 'Stipend shared by the Government of India and the employer (as per current NATS norms)',
+    portal: { label: 'NATS portal', url: 'https://nats.education.gov.in' },
+    openTo: ['diploma', 'undergraduate'],
+    notes: 'One year of real industry training with a certificate that counts as experience. Employers often convert apprentices into full-time staff.',
+  },
+  {
+    id: 'naps-apprenticeship',
+    name: 'NAPS — National Apprenticeship Promotion Scheme',
+    type: 'apprenticeship',
+    provider: 'Ministry of Skill Development and Entrepreneurship (MSDE)',
+    eligibility: 'ITI certificate holders and other candidates meeting the trade requirements of listed establishments',
+    stipend: 'Employer-paid stipend with government support as per NAPS norms',
+    portal: { label: 'Apprenticeship India portal', url: 'https://www.apprenticeshipindia.gov.in' },
+    openTo: ['iti', 'class10'],
+    notes: 'Covers a wider range of employers than NATS, including smaller workshops and MSMEs. Search by your trade and district.',
+  },
+  {
+    id: 'ncs-jobs',
+    name: 'National Career Service (Government job exchange)',
+    type: 'internship',
+    provider: 'Ministry of Labour and Employment',
+    eligibility: 'Any jobseeker with basic education details; separate listings for ITI, diploma and graduate candidates',
+    stipend: 'Varies by employer listing (many are paid full-time roles)',
+    portal: { label: 'National Career Service', url: 'https://www.ncs.gov.in' },
+    openTo: ['class10', 'class12-science', 'class12-commerce', 'class12-arts', 'iti', 'diploma', 'undergraduate'],
+    notes: 'Free government job-matching platform. Also lists local job fairs, which are often the fastest route for ITI holders.',
+  },
+  {
+    id: 'aicte-internship',
+    name: 'AICTE Internship Portal',
+    type: 'internship',
+    provider: 'All India Council for Technical Education',
+    eligibility: 'Students enrolled in AICTE-approved technical institutions',
+    stipend: 'Stipend varies by company; many are unpaid but carry a certificate and industry exposure',
+    portal: { label: 'AICTE internship portal', url: 'https://internship.aicte-india.org' },
+    openTo: ['diploma', 'undergraduate'],
+    notes: 'Best used in the second year onward. A verified internship on the resume matters more than the stipend at this stage.',
+  },
+  {
+    id: 'swayam-nptel',
+    name: 'SWAYAM & NPTEL Certifications',
+    type: 'community',
+    provider: 'Ministry of Education, IITs and IISc',
+    eligibility: 'Open to anyone; exams are held at designated centres for a small fee',
+    stipend: 'No stipend — but low-cost certified learning from IIT and IISc faculty',
+    portal: { label: 'SWAYAM', url: 'https://swayam.gov.in' },
+    openTo: ['class12-science', 'class12-commerce', 'class12-arts', 'iti', 'diploma', 'undergraduate'],
+    notes: 'A genuinely credible certificate for a student who cannot afford coaching. Combine with a project to make it count.',
+  },
+  {
+    id: 'science-olympiads',
+    name: 'Science, Maths and Informatics Olympiads',
+    type: 'olympiad',
+    provider: 'Homi Bhabha Centre for Science Education (HBCSE) and IARCS',
+    eligibility: 'School students in the relevant class band; the first stage is held through registered schools or centres',
+    stipend: 'No stipend — but national recognition, mentorship camps and a strong profile for admissions and scholarships',
+    portal: { label: 'HBCSE olympiads', url: 'https://olympiads.hbcse.tifr.res.in' },
+    openTo: ['class10', 'class12-science'],
+    notes: 'Ask your school to register you. Even reaching the second stage is a strong signal for competitive exams and research programmes.',
+  },
+  {
+    id: 'smart-india-hackathon',
+    name: 'Smart India Hackathon and National Innovation Contests',
+    type: 'competition',
+    provider: 'Ministry of Education Innovation Cell and partner ministries',
+    eligibility: 'School and college teams; school-level versions accept Class 6 and above in many editions',
+    stipend: 'Prize money for winners, with mentorship and incubation support in some tracks',
+    portal: { label: 'Smart India Hackathon', url: 'https://sih.gov.in' },
+    openTo: ['class10', 'class12-science', 'diploma', 'undergraduate'],
+    notes: 'Team-based, so a student with coding or design skills can join a college team. Real problem statements come from ministries.',
+  },
+  {
+    id: 'nasa-space-apps',
+    name: 'Space Apps and Open Data Hackathons',
+    type: 'competition',
+    provider: 'International and Indian open-data communities with local host venues',
+    eligibility: 'Open to students and beginners; teams self-organise and local venues host the event',
+    stipend: 'No stipend — certificates, mentorship and a portfolio project you can show in interviews',
+    portal: { label: 'NASA Space Apps Challenge', url: 'https://www.spaceappschallenge.org' },
+    openTo: ['class12-science', 'diploma', 'undergraduate'],
+    notes: 'A weekend event that gives a beginner an actual project and teamwork experience. Very good for students without college placements.',
+  },
+  {
+    id: 'ncert-nts',
+    name: 'National Talent Search Examination (NTS)',
+    type: 'scholarship-test',
+    provider: 'NCERT through state examination bodies',
+    eligibility: 'Class 10 students (and Class 12 for the older format in some states), as notified by the state',
+    stipend: 'Monthly scholarship for continued education, subject to renewal conditions',
+    portal: { label: 'NCERT', url: 'https://ncert.nic.in' },
+    openTo: ['class10'],
+    notes: 'Apply through your school and the state SCERT notification. The scholarship continues through higher secondary and graduation if you maintain performance.',
+  },
+  {
+    id: 'kvk-agri-training',
+    name: 'Krishi Vigyan Kendra (KVK) Vocational Training',
+    type: 'community',
+    provider: 'ICAR through district Krishi Vigyan Kendras',
+    eligibility: 'Rural youth, farmers and school pass-outs; short vocational courses in agriculture and allied trades',
+    stipend: 'Mostly free or very low cost training, with some stipend-linked programmes',
+    portal: { label: 'ICAR KVK directory', url: 'https://icar.org.in' },
+    openTo: ['class10', 'class12-science', 'iti'],
+    notes: 'Underused by students but excellent for agri-based self-employment, food processing and nursery management skills.',
+  },
+  {
+    id: 'itc-vocational',
+    name: 'NSDC / Sector Skill Council Short Courses',
+    type: 'community',
+    provider: 'National Skill Development Corporation and sector skill councils',
+    eligibility: 'Class 10 and above, depending on the course; many courses are short and job-linked',
+    stipend: 'Course fees vary; some government-funded batches are free with a stipend',
+    portal: { label: 'Skill India Digital', url: 'https://www.skillindiadigital.gov.in' },
+    openTo: ['class10', 'class12-science', 'class12-commerce', 'class12-arts', 'iti'],
+    notes: 'Useful when a student needs a quick employable skill with certification — always check that the course is linked to actual hiring in your district.',
+  },
+];
+
+export function opportunitiesFor(qualification: string): Opportunity[] {
+  const key = qualification as Opportunity['openTo'][number];
+  const matched = OPPORTUNITIES.filter((o) => o.openTo.includes(key));
+  return matched.length > 0 ? matched : OPPORTUNITIES;
+}
