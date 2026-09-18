@@ -64,6 +64,7 @@ const SUBTITLES: Record<string, { title: string; subtitle?: string }> = {
 export default function PathMitraApp() {
   const [profile, setProfile] = useState<StudentProfile>(EMPTY_PROFILE);
   const [route, setRoute] = useState<Route>({ tab: 'home' });
+  const [backStack, setBackStack] = useState<Route[]>([]);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
@@ -76,8 +77,23 @@ export default function PathMitraApp() {
     saveProfile(next);
   }
 
-  function openScreen(screen: string) {
-    setRoute({ tab: 'guide', sub: screen });
+  function go(route: Route) {
+    setBackStack((prev) => [...prev, route]);
+    setRoute(route);
+  }
+
+  function back() {
+    if (backStack.length === 0) {
+      setRoute({ tab: 'home' });
+      return;
+    }
+    const prev = backStack[backStack.length - 1];
+    setBackStack((stack) => stack.slice(0, -1));
+    setRoute(prev);
+  }
+
+  function resetStack() {
+    setBackStack([]);
   }
 
   function renderScreen() {
@@ -85,17 +101,20 @@ export default function PathMitraApp() {
     if (route.tab === 'guide' && route.sub) {
       const sub = route.sub;
       const meta = SUBTITLES[sub] ?? { title: 'Guide' };
-      const back = () => setRoute({ tab: 'guide' });
+      const back = () => {
+        setBackStack((stack) => stack.slice(0, -1));
+        setRoute({ tab: 'guide', sub: 'exams' });
+      };
 
       switch (sub) {
         case 'exams':
           return route.param ? (
             <ExamDetailScreen examId={route.param} onBack={back} />
           ) : (
-            <ExamsScreen profile={profile} onOpenExam={(id) => setRoute({ tab: 'guide', sub: 'exams', param: id })} />
+            <ExamsScreen profile={profile} onOpenExam={(id) => go({ tab: 'guide', sub: 'exams', param: id })} />
           );
         case 'careers':
-          return <CareersScreen profile={profile} />;
+          return <CareersScreen profile={profile} onBack={back} />;
         case 'states':
           return <StateScreen profile={profile} />;
         case 'scholarships':
@@ -116,7 +135,7 @@ export default function PathMitraApp() {
               {GUIDE_INDEX.map((item) => (
                 <div
                   key={item.id}
-                  onClick={() => setRoute({ tab: 'guide', sub: item.id })}
+                  onClick={() => go({ tab: 'guide', sub: item.id })}
                   className="cursor-pointer bg-white rounded-2xl border border-slate-100 shadow-xs p-4 flex items-center justify-between hover:border-indigo-200 transition"
                 >
                   <div className="flex items-center gap-3">
@@ -139,8 +158,9 @@ export default function PathMitraApp() {
         return (
           <HomeScreen
             profile={profile}
-            onOpenScreen={openScreen}
+            onOpenScreen={(screen) => go({ tab: 'guide', sub: screen })}
             onOpenPathway={(id) => setRoute({ tab: 'explore', param: id })}
+            back={back}
           />
         );
       case 'explore':
@@ -213,7 +233,7 @@ export default function PathMitraApp() {
               right={
                 route.tab === 'home' ? (
                   <button
-                    onClick={() => setRoute({ tab: 'profile' })}
+                    onClick={() => resetStack()}
                     aria-label="Open profile"
                     className="w-8 h-8 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-bold flex items-center justify-center"
                   >
