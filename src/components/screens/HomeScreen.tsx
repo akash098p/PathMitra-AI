@@ -6,6 +6,7 @@ import {
   BarChart2,
   Bot,
   ChevronRight,
+  ChevronLeft,
   Landmark,
   Map as MapIcon,
   Scale,
@@ -35,10 +36,12 @@ export function HomeScreen({
   profile,
   onOpenScreen,
   onOpenPathway,
+  back,
 }: {
   profile: StudentProfile;
   onOpenScreen: (screen: string) => void;
   onOpenPathway: (pathwayId: string) => void;
+  back?: () => void;
 }) {
   const recommendations = scorePathways(profile, 3);
   const qualification = QUALIFICATIONS.find((q) => q.id === profile.qualification);
@@ -123,7 +126,17 @@ export function HomeScreen({
             <p className="text-[9px] text-slate-500">Fees, exams and jobs for 2–3 routes</p>
           </div>
         </div>
-        <ChevronRight className="w-4 h-4 text-slate-400" />
+        {back ? (
+          <button
+            onClick={back}
+            className="p-1.5 rounded-full hover:bg-slate-100 transition"
+            aria-label="Back to home"
+          >
+            <ChevronLeft className="w-4 h-4 text-slate-400" />
+          </button>
+        ) : (
+          <ChevronRight className="w-4 h-4 text-slate-400" />
+        )}
       </Card>
 
       <Card onClick={() => onOpenScreen('advisor')} className="flex items-center justify-between">
@@ -136,7 +149,17 @@ export function HomeScreen({
             <p className="text-[9px] text-slate-500">It answers from the same verified data</p>
           </div>
         </div>
-        <ChevronRight className="w-4 h-4 text-slate-400" />
+        {back ? (
+          <button
+            onClick={back}
+            className="p-1.25 rounded-full hover:bg-slate-100 transition"
+            aria-label="Back to home"
+          >
+            <ChevronLeft className="w-4 h-4 text-slate-400" />
+          </button>
+        ) : (
+          <ChevronRight className="w-4 h-4 text-slate-400" />
+        )}
       </Card>
 
       <TrustNote />
