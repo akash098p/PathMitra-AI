@@ -2,26 +2,36 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
-    const { message, educationStage, goal } = await req.json();
-
-    // Strip accidental whitespace or wrapping quotation marks from the environment variable
+    const { message, educationStage, goal, userState } = await req.json();
     const apiKey = process.env.OPENROUTER_API_KEY?.replace(/['"]/g, '').trim();
 
     if (!apiKey) {
       return NextResponse.json({
-        reply: "⚠️ **Missing API Key**: Please set `OPENROUTER_API_KEY=sk-or-v1-...` inside your `.env.local` file and restart the development server (`npm run dev`)."
+        reply: "⚠️ **Missing OpenRouter Key**: Please ensure `OPENROUTER_API_KEY=sk-or-v1-...` is declared in your `.env.local` file and the server is restarted."
       });
     }
 
-    const systemPrompt = `You are PathMitra AI, an intelligent, empathetic educational companion for Indian students[cite: 2, 3].
-Current Student Profile: ${educationStage || 'Class 10 Completed'}[cite: 2, 3]
-Target Career Goal: ${goal || 'Explore Technology Careers'}[cite: 2, 3]
+    const systemPrompt = `You are PathMitra AI, India's most knowledgeable, empathetic education and career advisor for students (Class 10, 12, Diploma, College) and parents.
+Current Context:
+- Student Stage: ${educationStage || 'Class 10 Completed'}[cite: 2, 3]
+- Target Goal: ${goal || 'Technology & Engineering'}[cite: 2, 3]
+- State / Region: ${userState || 'All-India / West Bengal'}[cite: 2, 3]
 
-Guidance Rules:
-1. Explain Indian education pathways (Science PCM, 3-Year Polytechnic Diploma, ITI, BCA, B.Tech) with clarity and accuracy[cite: 2, 3].
-2. Outline key eligibility criteria, duration, and entrance test routes (e.g., JEE Main, State CETs, Polytechnic JEXPO/JEECUP)[cite: 2, 3].
-3. Present balanced trade-offs (hands-on technical labs vs theoretical curriculum) without forcing a single path[cite: 2, 3].
-4. Format all responses cleanly using bullet points and standalone bold text for scannability.`;
+Your Knowledge Base:
+1. Academic Streams: Science (PCM/PCB/PCMB), Commerce (with Applied Maths/IP), Humanities/Arts, Polytechnic (3-Yr Diploma), ITI (1-2 Yr Trades)[cite: 2, 3].
+2. Entrance Exams: JEE Main/Advanced, NEET-UG, CUET, WBJEE, MHT-CET, KCET, COMEDK, JEECUP, JEXPO, BITSAT, NDA[cite: 2, 3].
+3. Lateral Entry Norms (AICTE): 3-Year Polytechnic Diploma holders are eligible for direct admission to 2nd year (3rd semester) B.Tech/BE programs via state lateral entry tests (JELET, LEET, etc.) without appearing for JEE Main.
+4. Government Career Exams:
+   - After 10th: SSC MTS, RRB Group D, Indian Navy MR, Indian Army Tradesman, State Police.
+   - After 12th: SSC CHSL, SSC Stenographer, NDA (National Defence Academy), RRB ALP (Technician), Coast Guard Navik.
+   - After Diploma/Grad: SSC JE, RRB JE, State PSC Junior Engineer, UPSC CSE, Banking (IBPS/SBI).
+5. Private Industry Compensation: Realistic starter packages (TCS/Infosys/Wipro Service: ₹3.5-4.5 LPA; Mid-tier/Product Startups: ₹6-12 LPA; Tier-1 Tech/GCCs: ₹14-25+ LPA).
+
+Response Rules:
+- Address both students and anxious parents clearly and constructively.
+- Present unbiased pros and cons: explain fees, preparation intensity, risk factors, and fallback career plans[cite: 2, 3].
+- Never prescribe only one "magic" route[cite: 2, 3].
+- Format cleanly with bold headings and concise bullet points.`;
 
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
@@ -29,7 +39,7 @@ Guidance Rules:
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`,
         'HTTP-Referer': 'http://localhost:3000',
-        'X-Title': 'PathMitra AI',
+        'X-Title': 'PathMitra AI Senior Guide',
       },
       body: JSON.stringify({
         model: 'openrouter/free',
@@ -42,22 +52,20 @@ Guidance Rules:
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error('OpenRouter Free Router Error:', errorData);
-      const errMsg = errorData.error?.message || 'Failed to complete request via OpenRouter free tier.';
+      const err = await response.json();
+      console.error('OpenRouter error:', err);
       return NextResponse.json({
-        reply: `⚠️ **OpenRouter Notice**: ${errMsg}`
+        reply: `⚠️ **OpenRouter Service Notice**: ${err.error?.message || 'Unable to fetch response. Please verify key.'}`
       });
     }
 
     const data = await response.json();
-    const replyText = data.choices?.[0]?.message?.content || "I couldn't retrieve a response. Please ask your question again.";
-
-    return NextResponse.json({ reply: replyText });
+    return NextResponse.json({ 
+      reply: data.choices?.[0]?.message?.content || "I couldn't process that query. Please ask again." 
+    });
   } catch (error: any) {
-    console.error('Route Handler Error:', error);
     return NextResponse.json(
-      { reply: 'A network error occurred while communicating with the AI advisor. Please try again shortly.' },
+      { reply: "A network error occurred while communicating with PathMitra AI. Please retry." },
       { status: 500 }
     );
   }
