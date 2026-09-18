@@ -22,7 +22,13 @@ const TYPE_LABEL: Record<string, string> = {
   community: 'programme',
 };
 
-export function SkillsScreen({ profile }: { profile: StudentProfile }) {
+export function SkillsScreen({
+  profile,
+  onBack,
+}: {
+  profile: StudentProfile;
+  onBack?: () => void;
+}) {
   const tracks = skillTracksForInterests(profile.interests);
   const visible = tracks;
   const opportunities = profile.qualification ? opportunitiesFor(profile.qualification) : OPPORTUNITIES;
