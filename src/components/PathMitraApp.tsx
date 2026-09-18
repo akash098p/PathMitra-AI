@@ -98,59 +98,68 @@ export default function PathMitraApp() {
 
   function renderScreen() {
     if (!hydrated) return null;
-    if (route.tab === 'guide' && route.sub) {
+    if (route.tab === 'guide') {
       const sub = route.sub;
       const meta = SUBTITLES[sub] ?? { title: 'Guide' };
       const back = () => {
+        const current = backStack[backStack.length - 1];
         setBackStack((stack) => stack.slice(0, -1));
-        setRoute({ tab: 'guide', sub: 'exams' });
+        if (!current) {
+          setRoute({ tab: 'home' });
+          return;
+        }
+        setRoute(current);
       };
 
-      switch (sub) {
-        case 'exams':
-          return route.param ? (
-            <ExamDetailScreen examId={route.param} onBack={back} />
-          ) : (
-            <ExamsScreen profile={profile} onOpenExam={(id) => go({ tab: 'guide', sub: 'exams', param: id })} />
-          );
-        case 'careers':
-          return <CareersScreen profile={profile} onBack={back} />;
-        case 'states':
-          return <StateScreen profile={profile} />;
-        case 'scholarships':
-          return <ScholarshipsScreen profile={profile} />;
-        case 'skills':
-          return <SkillsScreen profile={profile} />;
-        case 'scenarios':
-          return <ScenarioScreen />;
-        case 'roadmap':
-          return <RoadmapScreen profile={profile} onToggleMilestone={(id) => update(toggleMilestone(profile, id))} />;
-        default:
-          return (
-            <div className="p-4 space-y-3">
-              <h2 className="text-sm font-bold text-slate-900">Your complete guide</h2>
-              <p className="text-[11px] text-slate-500 leading-relaxed">
-                Every dataset in PathMitra lives behind one of these doors.
-              </p>
-              {GUIDE_INDEX.map((item) => (
-                <div
-                  key={item.id}
-                  onClick={() => go({ tab: 'guide', sub: item.id })}
-                  className="cursor-pointer bg-white rounded-2xl border border-slate-100 shadow-xs p-4 flex items-center justify-between hover:border-indigo-200 transition"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-xl">{item.emoji}</span>
-                    <div>
-                      <h3 className="text-[11px] font-bold text-slate-900">{item.label}</h3>
-                      <p className="text-[10px] text-slate-500">{item.hint}</p>
-                    </div>
-                  </div>
-                  <span className="text-indigo-400">›</span>
-                </div>
-              ))}
-            </div>
-          );
+      if (sub) {
+        switch (sub) {
+          case 'exams':
+            return route.param ? (
+              <ExamDetailScreen examId={route.param} onBack={back} />
+            ) : (
+              <ExamsScreen profile={profile} onOpenExam={(id) => go({ tab: 'guide', sub: 'exams', param: id })} />
+            );
+          case 'careers':
+            return <CareersScreen profile={profile} onBack={back} />;
+          case 'states':
+            return <StateScreen profile={profile} />;
+          case 'scholarships':
+            return <ScholarshipsScreen profile={profile} />;
+          case 'skills':
+            return <SkillsScreen profile={profile} />;
+          case 'scenarios':
+            return <ScenarioScreen />;
+          case 'roadmap':
+            return <RoadmapScreen profile={profile} onToggleMilestone={(id) => update(toggleMilestone(profile, id))} />;
+          default:
+            return null;
+        }
       }
+
+      return (
+        <div className="p-4 space-y-3">
+          <h2 className="text-sm font-bold text-slate-900">Your complete guide</h2>
+          <p className="text-[11px] text-slate-500 leading-relaxed">
+            Every dataset in PathMitra lives behind one of these doors.
+          </p>
+          {GUIDE_INDEX.map((item) => (
+            <div
+              key={item.id}
+              onClick={() => go({ tab: 'guide', sub: item.id })}
+              className="cursor-pointer bg-white rounded-2xl border border-slate-100 shadow-xs p-4 flex items-center justify-between hover:border-indigo-200 transition"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-xl">{item.emoji}</span>
+                <div>
+                  <h3 className="text-[11px] font-bold text-slate-900">{item.label}</h3>
+                  <p className="text-[10px] text-slate-500">{item.hint}</p>
+                </div>
+              </div>
+              <span className="text-indigo-400">›</span>
+            </div>
+          ))}
+        </div>
+      );
     }
 
     switch (route.tab) {
@@ -168,14 +177,23 @@ export default function PathMitraApp() {
           <PathwayDetailScreen
             pathwayId={route.param}
             profile={profile}
-            onBack={() => setRoute({ tab: 'explore' })}
-            onOpenExam={(id) => setRoute({ tab: 'guide', sub: 'exams', param: id })}
+            onBack={() => {
+              const current = backStack[backStack.length - 1];
+              setBackStack((stack) => stack.slice(0, -1));
+              if (!current) {
+                setRoute({ tab: 'home' });
+                return;
+              }
+              setRoute(current);
+            }}
+            onOpenExam={(id) => go({ tab: 'guide', sub: 'exams', param: id })}
           />
         ) : (
           <ExploreScreen
             profile={profile}
-            onOpenPathway={(id) => setRoute({ tab: 'explore', param: id })}
+            onOpenPathway={(id) => go({ tab: 'explore', param: id })}
             onToggleSaved={(id) => update(toggleSavedPathway(profile, id as PathwayId))}
+            onBack={back}
           />
         );
       case 'advisor':
