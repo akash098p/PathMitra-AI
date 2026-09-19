@@ -100,7 +100,7 @@ export default function PathMitraApp() {
     if (!hydrated) return null;
     if (route.tab === 'guide') {
       const sub = route.sub;
-      const meta = SUBTITLES[sub] ?? { title: 'Guide' };
+      const meta = sub ? (SUBTITLES[sub] ?? { title: 'Guide' }) : { title: 'Guide' };
       const back = () => {
         const current = backStack[backStack.length - 1];
         setBackStack((stack) => stack.slice(0, -1));
