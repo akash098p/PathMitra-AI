@@ -35,3 +35,27 @@ body {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* The app is designed around a narrow phone frame. Keep compact metadata
+   readable on actual mobile screens without changing the desktop density. */
+@media (max-width: 640px) {
+  [class~="text-[9px]"] {
+    font-size: 0.72rem;
+    line-height: 1.35;
+  }
+
+  [class~="text-[10px]"] {
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+
+  [class~="text-[11px]"] {
+    font-size: 0.84rem;
+    line-height: 1.45;
+  }
+
+  [class~="text-xs"] {
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+}
