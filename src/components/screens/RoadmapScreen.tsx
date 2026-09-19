@@ -48,9 +48,13 @@ function buildPlan(profile: StudentProfile): RoadmapPlan | null {
   const primary = ordered[0];
   if (!primary) return null;
 
-  const firstIncome = primary.durationYears <= 3
-    ? `Around age ${profile.qualification === 'class10' ? 18 : 20}–21 through entry jobs, apprenticeships or internships`
-    : `Usually around age ${profile.qualification === 'class10' ? 22 : 24} after the first degree or professional qualification`;
+  const firstIncome = profile.qualification === 'btech-student'
+    ? 'During the final year through internships, placements, freelance work or graduate engineer roles'
+    : profile.qualification === 'b-ed-student'
+      ? 'After teaching practice through TET/CTET, school recruitment, tutoring or education roles'
+      : primary.durationYears <= 3
+        ? `Around age ${profile.qualification === 'class10' ? 18 : 20}–21 through entry jobs, apprenticeships or internships`
+        : `Usually around age ${profile.qualification === 'class10' ? 22 : 24} after the first degree or professional qualification`;
   const examText = primary.entranceExams.length
     ? `Check ${primary.entranceExams.slice(0, 2).map((id) => id.toUpperCase()).join(' and ')} dates on the official portals and make a second-choice college list.`
     : 'Shortlist nearby government and private institutes, then verify recognition, placement records and total fees.';
@@ -75,7 +79,7 @@ function buildPlan(profile: StudentProfile): RoadmapPlan | null {
     {
       id: `prepare-${primary.id}`,
       phase: 'Prepare',
-      timing: profile.qualification === 'class10' ? 'Next 3–6 months' : 'Before applications open',
+      timing: profile.qualification === 'class10' ? 'Next 3–6 months' : profile.qualification === 'btech-student' || profile.qualification === 'b-ed-student' ? 'This semester' : 'Before applications open',
       label: 'Prepare for admission',
       detail: `${examText} Keep marksheets, certificates, photographs and income or category documents ready in one folder.`,
       outcome: 'Applications submitted on time',
