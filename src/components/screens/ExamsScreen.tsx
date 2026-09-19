@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Heart } from 'lucide-react';
 import { EXAMS, findExam } from '@/data/exams';
 import { QUALIFICATIONS } from '@/data/qualifications';
 import type { StudentProfile } from '@/lib/types';
@@ -11,7 +12,17 @@ import { Bullet, Card, Chip, EmptyState, KeyValue, LinkList, Meter, SectionTitle
 // they unlock, the usual yearly window and the official portal.
 // ============================================================================
 
-export function ExamDetailScreen({ examId, onBack }: { examId: string; onBack: () => void }) {
+export function ExamDetailScreen({
+  examId,
+  profile,
+  onToggleSaved,
+  onBack,
+}: {
+  examId: string;
+  profile: StudentProfile;
+  onToggleSaved: (examId: string) => void;
+  onBack: () => void;
+}) {
   const exam = findExam(examId);
   if (!exam) {
     return (
@@ -29,7 +40,17 @@ export function ExamDetailScreen({ examId, onBack }: { examId: string; onBack: (
           <Tag tone={exam.level === 'national' ? 'indigo' : 'amber'}>{exam.level}</Tag>
           <Tag tone="slate">{exam.category}</Tag>
         </div>
-        <h2 className="text-sm font-bold text-slate-900 leading-snug">{exam.name}</h2>
+        <div className="flex items-start justify-between gap-2">
+          <h2 className="text-sm font-bold text-slate-900 leading-snug">{exam.name}</h2>
+          <button
+            type="button"
+            aria-label={profile.savedExams.includes(exam.id) ? `Remove ${exam.shortName} from saved exams` : `Save ${exam.shortName}`}
+            onClick={() => onToggleSaved(exam.id)}
+            className="shrink-0 p-1 text-rose-500"
+          >
+            <Heart className={`w-4 h-4 ${profile.savedExams.includes(exam.id) ? 'fill-current' : ''}`} />
+          </button>
+        </div>
         <p className="text-[10px] text-slate-500 mt-1">{exam.conductedBy}</p>
       </div>
 
@@ -67,9 +88,11 @@ export function ExamDetailScreen({ examId, onBack }: { examId: string; onBack: (
 export function ExamsScreen({
   profile,
   onOpenExam,
+  onToggleSaved,
 }: {
   profile: StudentProfile;
   onOpenExam: (examId: string) => void;
+  onToggleSaved: (examId: string) => void;
 }) {
   const [filter, setFilter] = useState<'all' | 'national' | 'state' | 'mine'>('all');
 
@@ -118,7 +141,20 @@ export function ExamsScreen({
                 <h3 className="text-xs font-bold text-slate-900 leading-snug">{exam.name}</h3>
                 <p className="text-[10px] text-slate-500 mt-0.5">{exam.conductedBy}</p>
               </div>
-              <Tag tone={exam.level === 'national' ? 'indigo' : 'amber'}>{exam.level}</Tag>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  aria-label={profile.savedExams.includes(exam.id) ? `Remove ${exam.shortName} from saved exams` : `Save ${exam.shortName}`}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onToggleSaved(exam.id);
+                  }}
+                  className="p-1 text-rose-500"
+                >
+                  <Heart className={`w-4 h-4 ${profile.savedExams.includes(exam.id) ? 'fill-current' : ''}`} />
+                </button>
+                <Tag tone={exam.level === 'national' ? 'indigo' : 'amber'}>{exam.level}</Tag>
+              </div>
             </div>
             <p className="text-[10px] text-slate-600 leading-relaxed line-clamp-2">{exam.grants}</p>
             <div className="flex flex-wrap items-center gap-1 pt-1 border-t border-slate-50">
