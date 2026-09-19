@@ -1,6 +1,135 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# PathMitra AI
+
+PathMitra AI is a practical education-to-career guide for Indian students and their families. It helps students compare realistic routes after school, understand exams and scholarships, explore careers, build a roadmap, and ask grounded questions in an AI advisor.
+
+The product is designed around one principle: explain trade-offs clearly instead of pushing every student toward the same path.
+
+## What It Includes
+
+- Personalised onboarding for stage, interests, budget, mobility, risk appetite, and family priorities
+- Route recommendations across academic, diploma, ITI, skills, and employment pathways
+- Explore views with pathway details, costs, duration, eligibility, outcomes, strengths, and trade-offs
+- Entrance exam, career, state guide, scholarship, skills, scenario, and roadmap screens
+- Side-by-side route comparison
+- Saved pathways, saved exams, and roadmap progress stored locally in the browser
+- AI advisor with profile-aware answers, conversation history, and quick prompts
+- Local, dataset-backed answers for common questions before an external AI provider is used
+- Responsive phone-style interface with a light visual theme and desktop presentation frame
+
+## Tech Stack
+
+- Next.js `16.3.5` with the App Router
+- React `19.2.8` and TypeScript
+- Tailwind CSS v4 through `@tailwindcss/postcss`
+- Lucide React for interface icons
+- Browser `localStorage` for profile persistence
+- Gemini and OpenRouter as optional AI providers
+
+## Requirements
+
+- Node.js 20 or newer
+- npm
+
+## Run Locally
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+The app works without AI API keys. In that mode, local greetings and answers that match the bundled datasets continue to work; questions that need an external model will return the configured fallback response.
+
+## Environment Variables
+
+Create `.env.local` in the project root when external AI responses are needed:
+
+```env
+GOOGLE_AI_STUDIO_API_KEY=your_google_ai_studio_key
+OPENROUTER_API_KEY=your_openrouter_key
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
+
+`GOOGLE_AI_STUDIO_API_KEY` is used first. `OPENROUTER_API_KEY` is used as a fallback when Gemini is unavailable or does not return an answer. `NEXT_PUBLIC_SITE_URL` is sent as the OpenRouter HTTP referer and should be set to the deployed site URL in production.
+
+Never commit `.env.local` or expose provider keys in client-side code. The keys are read only by `src/app/api/chat/route.ts`.
+
+## Available Scripts
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the local development server |
+| `npm run build` | Create a production build |
+| `npm run start` | Serve the production build |
+| `npm run lint` | Run ESLint across the project |
+
+## How the App Works
+
+1. A student completes onboarding or opens the app with a blank profile.
+2. Profile answers are scored against the bundled pathway data.
+3. The home screen shows the closest routes and the rest of the app provides deeper guides.
+4. Profile edits, saved items, and roadmap milestones are persisted in browser storage.
+5. Advisor questions go to `/api/chat` with the relevant profile context.
+6. The API checks local conversational skills and verified datasets first, then tries Gemini, then OpenRouter.
+
+The advisor is designed as guidance, not an official admissions or employment authority. Exam dates, fees, eligibility, and scholarship rules should always be confirmed on the linked official portal.
+
+## Project Structure
+
+```text
+src/
+	app/
+		api/chat/route.ts       Advisor API and provider fallback logic
+		globals.css             Global styles and responsive text adjustments
+		layout.tsx              Root metadata, fonts, and document shell
+		page.tsx                Application entry point
+	components/
+		PathMitraApp.tsx        Navigation, routing, and profile state
+		Onboarding.tsx          Guided profile setup
+		MarkdownMessage.tsx     Advisor response rendering
+		ui.tsx                  Shared frame, cards, buttons, chips, and UI primitives
+		screens/                Home, guides, advisor, profile, and detail screens
+	data/                     Bundled pathways, exams, careers, scholarships, and skills
+	lib/
+		chatbrain.ts            Local conversational and dataset-backed answers
+		greeting.ts             Time-aware greetings
+		profile.ts              Profile persistence and profile helpers
+		recommend.ts            Pathway scoring and recommendations
+		roi.ts                  Cost, time, and return calculations
+		types.ts                Shared TypeScript domain types
+public/                     Static illustrations and assets
+```
+
+## Data and Privacy
+
+Profile data is stored in the browser under the `pathmitra.profile.v2` local-storage key. There is no account system in this version. The advisor request sends the relevant stage, interests, constraints, priorities, and recent chat history to the server route when an external answer is required.
+
+To clear the local profile, use **Start over with a fresh profile** in the Profile screen, or remove the `pathmitra.profile.v2` key from browser storage during development.
+
+## Production Build
+
+Run the production checks locally:
+
+```bash
+npm run lint
+npm run build
+npm run start
+```
+
+For Vercel or another Node-compatible host, configure the environment variables in the deployment settings, build with `npm run build`, and start with `npm run start` when a persistent Node server is required.
+
+## Contributing
+
+Keep new recommendations and guide content in `src/data/`, shared domain logic in `src/lib/`, and reusable visual patterns in `src/components/ui.tsx`. When adding an AI-backed answer, prefer a grounded local answer first and include an official source link wherever the topic involves dates, fees, admissions, or government schemes.
 
 First, run the development server:
 
@@ -20,17 +149,3 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
