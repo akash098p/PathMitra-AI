@@ -260,8 +260,8 @@ export default function PathMitraApp() {
               }
               right={
                 route.tab === 'home' ? (
-                  <div className="relative flex items-center justify-center w-10 h-10">
-                    <div className="absolute inset-0 rounded-full border-[2px] border-amber-300 shadow-[0_0_0_2px_rgba(251,191,36,0.35)] animate-[spin_4s_linear_infinite]" />
+                  <div className="relative flex items-center justify-center w-10 h-10 aspect-square shrink-0">
+                    <div className="absolute inset-0 aspect-square rounded-full border-2 border-blue-500 shadow-[0_0_0_2px_rgba(59,130,246,0.25)] animate-[spin_4s_linear_infinite]" />
                     <button
                       onClick={() => setRoute({ tab: 'profile-edit' })}
                       aria-label="Open profile editor"

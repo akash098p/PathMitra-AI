@@ -84,7 +84,7 @@ export function ProfileScreen({
         <label className="block">
           <span className="text-[9px] font-bold uppercase tracking-wide text-slate-400">Name</span>
           <input
-            value={profile.name}
+            value={hideAdvanced ? draft.name : profile.name}
             onChange={(e) => patch({ name: e.target.value })}
             placeholder="Your name"
             className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[11px] text-slate-800 outline-none focus:border-indigo-400"
@@ -95,7 +95,7 @@ export function ProfileScreen({
           <label className="block">
             <span className="text-[9px] font-bold uppercase tracking-wide text-slate-400">Age</span>
             <input
-              value={profile.age ?? ''}
+              value={hideAdvanced ? draft.age ?? '' : profile.age ?? ''}
               onChange={(e) => patch({ age: e.target.value })}
               placeholder="18"
               className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[11px] text-slate-800 outline-none focus:border-indigo-400"
@@ -104,7 +104,7 @@ export function ProfileScreen({
           <label className="block">
             <span className="text-[9px] font-bold uppercase tracking-wide text-slate-400">Gender</span>
             <input
-              value={profile.gender ?? ''}
+              value={hideAdvanced ? draft.gender ?? '' : profile.gender ?? ''}
               onChange={(e) => patch({ gender: e.target.value })}
               placeholder="Female"
               className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[11px] text-slate-800 outline-none focus:border-indigo-400"
