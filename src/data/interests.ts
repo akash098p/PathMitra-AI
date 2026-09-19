@@ -1,7 +1,7 @@
 import type { InterestQuestion } from '@/lib/types';
 
 // ============================================================================
-// Onboarding step 2 — a 6-question interest diagnostic.
+// Onboarding step 2 — a 5-question interest diagnostic.
 // No student should be forced to name a career at 16, so the quiz asks about
 // the *work*, never about job titles.
 // ============================================================================
@@ -25,16 +25,6 @@ export const INTEREST_QUESTIONS: InterestQuestion[] = [
       { label: 'Biology and Chemistry', interests: ['medicine', 'research'], emoji: '🧬' },
       { label: 'History, Civics, and Languages', interests: ['law', 'govt-service', 'media'], emoji: '📜' },
       { label: 'Accounts, Economics, and Statistics', interests: ['business'], emoji: '🧾' },
-    ],
-  },
-  {
-    id: 'problemsolving',
-    prompt: 'Your friend shows you a broken laptop. Your first instinct?',
-    options: [
-      { label: 'Open it up and check the hardware', interests: ['hands-on', 'coding'], emoji: '🛠️' },
-      { label: 'Reinstall, run diagnostics, check the OS', interests: ['coding'], emoji: '💽' },
-      { label: 'Search, compare and decide what to buy next', interests: ['business'], emoji: '🔍' },
-      { label: 'Explain the whole thing to them patiently', interests: ['teaching'], emoji: '🧑‍🏫' },
     ],
   },
   {
