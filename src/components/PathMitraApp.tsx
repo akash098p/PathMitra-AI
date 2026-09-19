@@ -249,51 +249,61 @@ export default function PathMitraApp() {
   // Allow browsing without completing onboarding: advisor and guide still work
   // with generic advice, and Profile can set the stage later.
   const subMeta = route.tab === 'guide' && route.sub ? SUBTITLES[route.sub] : undefined;
-  const hideHeader =
-    route.tab === 'advisor' ||
-    route.tab === 'profile' ||
-    (route.tab === 'guide' && route.sub === undefined);
+  const headerTitle =
+    subMeta?.title ??
+    (route.tab === 'home'
+      ? 'PathMitra'
+      : route.tab === 'explore'
+        ? route.param
+          ? 'Route details'
+          : 'Explore routes'
+        : route.tab === 'guide'
+          ? 'Your complete guide'
+          : route.tab === 'advisor'
+            ? 'PathMitra Advisor'
+            : route.tab === 'profile-edit'
+              ? 'Edit profile'
+              : route.tab === 'profile'
+                ? 'Your profile'
+                : 'PathMitra');
+  const headerSubtitle =
+    subMeta?.subtitle ??
+    (route.tab === 'guide'
+      ? 'Explore exams, careers and opportunities'
+      : route.tab === 'advisor'
+        ? 'Ask questions about your next step'
+        : route.tab === 'profile-edit'
+          ? 'Personal details saved on this device'
+          : route.tab === 'profile'
+            ? 'Your choices and saved routes'
+            : undefined);
 
   return (
     <PhoneFrame>
       <div className="flex-1 flex flex-col overflow-hidden bg-slate-50">
-        {!hideHeader ? (
-          <div className="px-4 pt-5 pb-2 bg-white border-b border-slate-100">
+        <div className="px-4 pt-5 pb-2 bg-white border-b border-slate-100">
             <ScreenHeader
-              title={
-                subMeta
-                  ? subMeta.title
-                  : route.tab === 'home'
-                    ? 'PathMitra'
-                    : route.tab === 'explore'
-                      ? route.param
-                        ? 'Route details'
-                        : 'Explore routes'
-                      : 'PathMitra'
-              }
-              subtitle={subMeta?.subtitle}
+              title={headerTitle}
+              subtitle={headerSubtitle}
               onBack={
                 route.param || (route.tab === 'guide' && route.sub)
                   ? back
                   : undefined
               }
               right={
-                route.tab === 'home' ? (
-                  <div className="relative flex items-center justify-center w-10 h-10 aspect-square shrink-0">
-                    <div className="absolute inset-0 aspect-square rounded-full border-2 border-blue-500 shadow-[0_0_0_2px_rgba(59,130,246,0.25)] animate-[spin_4s_linear_infinite]" />
-                    <button
-                      onClick={() => setRoute({ tab: 'profile-edit' })}
-                      aria-label="Open profile editor"
-                      className="relative z-10 w-8 h-8 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-bold flex items-center justify-center"
-                    >
-                      {profile.name ? profile.name.slice(0, 1).toUpperCase() : '☺'}
-                    </button>
-                  </div>
-                ) : undefined
+                <div className="relative flex items-center justify-center w-10 h-10 aspect-square shrink-0">
+                  <div className="absolute inset-0 aspect-square rounded-full border-2 border-blue-500 shadow-[0_0_0_2px_rgba(59,130,246,0.25)] animate-[spin_4s_linear_infinite]" />
+                  <button
+                    onClick={() => setRoute({ tab: 'profile-edit' })}
+                    aria-label="Open profile editor"
+                    className="relative z-10 w-8 h-8 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-bold flex items-center justify-center"
+                  >
+                    {profile.name ? profile.name.slice(0, 1).toUpperCase() : '☺'}
+                  </button>
+                </div>
               }
             />
-          </div>
-        ) : null}
+        </div>
 
         <div className="flex-1 overflow-y-auto">{renderScreen()}</div>
       </div>
