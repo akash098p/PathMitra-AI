@@ -19,11 +19,18 @@ interface ChatMessage {
   source?: string;
 }
 
+// Every prompt below is answered from the bundled datasets, so tapping a chip
+// never spends an AI call. Keep it that way when adding new ones.
 const QUICK_PROMPTS = [
-  'Can I do B.Tech without JEE if I take a 3-year polytechnic diploma?',
-  'What government jobs can I aim for after Class 10?',
+  'What can I do after Class 10?',
   'Compare Science PCM with a polytechnic diploma on fees and time to first salary',
+  'What government jobs can I aim for after Class 10?',
+  'How much will a diploma cost and which scholarships cover it?',
   'Which scholarships can my family actually apply for?',
+  'What should I do next?',
+  'Which stream should I choose after Class 10?',
+  'I am confused about what to do after 12th',
+  'How long does it take to start earning after a diploma?',
   'What skills should I start learning right now?',
   'How do I prepare for JEXPO and what does it open?',
 ];

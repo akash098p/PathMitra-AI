@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { answerLocally } from '@/lib/chatbrain';
-import { EMPTY_PROFILE, BUDGET_LABELS, MOBILITY_LABELS, RISK_LABELS, PRIORITY_LABELS, describeProfile } from '@/lib/profile';
+import { answerLocally, contextualFollowUp } from '@/lib/chatbrain';
+import { EMPTY_PROFILE, describeProfile } from '@/lib/profile';
 import type { StudentProfile } from '@/lib/types';
 
 // ============================================================================
@@ -177,10 +177,26 @@ export async function POST(req: Request) {
       .map((turn) => ({ role: turn.role, content: turn.content.trim().slice(0, 2000) }));
 
     // 1. Use verified local data when the question matches a known topic.
-    // Specific unknown organisations and schemes return null so the AI providers
-    // can answer them instead of being trapped by a generic category response.
-    const hasPriorUserQuestion = history.some((turn) => turn.role === 'user');
-    const localAnswer = hasPriorUserQuestion ? null : answerLocally(cleanMsg, profile);
+    // This runs on every turn, not only the first one: the extended brain
+    // covers fees, salaries, government jobs, duration, scholarships, skills,
+    // stream choice and follow-up questions, so most conversations never reach
+    // an AI provider at all. Specific unknown organisations and schemes still
+    // return null so the providers can answer them.
+    const localAnswer = answerLocally(cleanMsg, profile);
+
+    // A short follow-up ("and the fees?", "what about for girls?") carries no
+    // subject of its own, so resolve it against the previous student question
+    // before settling for a generic overview answer.
+    const genericOverview = localAnswer ? /-overview$/.test(localAnswer.source) : false;
+    if (localAnswer && !genericOverview) {
+      return NextResponse.json({ reply: localAnswer.reply, source: localAnswer.source });
+    }
+
+    const followUp = contextualFollowUp(cleanMsg, history, profile);
+    if (followUp) {
+      return NextResponse.json({ reply: followUp.reply, source: followUp.source });
+    }
+
     if (localAnswer) {
       return NextResponse.json({ reply: localAnswer.reply, source: localAnswer.source });
     }
@@ -207,10 +223,19 @@ export async function POST(req: Request) {
 
     // If both providers failed or returned empty, give an honest fallback with
     // concrete places to look instead of a fake confident answer.
+    // If both providers failed or returned empty, give an honest fallback with
+    // concrete places to look instead of a fake confident answer. When no
+    // provider key is configured at all we say that plainly, because "the AI
+    // service failed" is misleading in that case.
+    const providerConfigured = Boolean(process.env.GOOGLE_AI_STUDIO_API_KEY || process.env.OPENROUTER_API_KEY);
+    if (!providerConfigured) {
+      console.warn('[PathMitra/chat] No AI provider key configured — answering from bundled data only.');
+    }
     return NextResponse.json({
-      reply:
-        'I could not answer this one from my own data, and the AI service did not return a usable reply just now. Try the Explore tab for streams or the Guide tab for exams, fees, jobs and scholarships — that data is built into this app.',
-      source: 'no-ai-reply',
+      reply: providerConfigured
+        ? 'I could not answer this one from my own data, and the AI service did not return a usable reply just now. Try the Explore tab for streams or the Guide tab for exams, fees, jobs and scholarships — that data is built into this app. Rephrasing also helps: name a specific stream, exam, fee, government job, scholarship or skill.'
+        : 'This question goes beyond the data bundled in the app, and the live AI helper is not configured on this deployment. Ask me about streams, diplomas, ITI trades, entrance exams, government and private jobs, scholarships, fees, duration or a step-by-step plan — all of that is answered from this app\'s own verified data.',
+      source: providerConfigured ? 'no-ai-reply' : 'offline-only',
     });
   } catch {
     return NextResponse.json(

@@ -47,7 +47,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-The app works without AI API keys. In that mode, local greetings and answers that match the bundled datasets continue to work; questions that need an external model will return the configured fallback response.
+The app works without AI API keys. The advisor answers first from the bundled datasets — greetings and quick messages, fees and total cost, government jobs and pay bands, duration and first-salary age, stage-wise options after Class 10 and 12, stream choice, ITI trades, defence routes, scholarships (amounts, documents and application windows), setbacks such as failed exams or a gap year, skill tracks and step-by-step roadmaps. Questions that genuinely need live or external facts are sent to a configured AI provider, and if none is configured the app says so instead of guessing.
 
 ## Environment Variables
 
@@ -80,6 +80,20 @@ Never commit `.env.local` or expose provider keys in client-side code. The keys 
 4. Profile edits, saved items, and roadmap milestones are persisted in browser storage.
 5. Advisor questions go to `/api/chat` with the relevant profile context.
 6. The API checks local conversational skills and verified datasets first, then tries Gemini, then OpenRouter.
+
+### Offline-first advisor
+
+`src/lib/chatbrain.ts` is the grounded brain. It runs before any network call, on every turn, and answers from the same data the screens render:
+
+- **Quick messages** — greetings, "ok", "thanks", "are you real", "what can you do", confused or undecided openers.
+- **Routes and comparisons** — pathway cards, exam cards, exam vs exam, pathway vs pathway, degree targets (B.Tech, MBBS, CA) and the diploma-to-B.Tech lateral entry bridge.
+- **Money** — per-pathway government and private fees, total cost and payback from the ROI scenarios, affordability and fee-waiver questions mapped to scholarships.
+- **Outcomes** — starting and experienced pay bands, government job routes by stage, and what a specific pathway leads to.
+- **Decisions** — stream choice, options after Class 10 / 12 / ITI / diploma / a degree, step-by-step roadmap, and honest answers on failed exams, dropouts and gap years.
+- **Scholarship logistics** — documents to keep ready and typical application windows, per scheme.
+- **Follow-ups** — short messages such as "and the fees?" or "what about for girls?" are resolved against the previous question instead of being sent to a provider.
+
+Because this layer answers most student questions, the AI keys are used far less often, which keeps the free-tier limits comfortable. Named private scholarships or organisations that are not in the datasets still go to the provider, because inventing their rules would be worse than saying "check the official portal".
 
 The advisor is designed as guidance, not an official admissions or employment authority. Exam dates, fees, eligibility, and scholarship rules should always be confirmed on the linked official portal.
 
