@@ -14,7 +14,7 @@ export const OPPORTUNITIES: Opportunity[] = [
     eligibility: 'Diploma holders and graduates of AICTE-approved institutions',
     stipend: 'Stipend shared by the Government of India and the employer (as per current NATS norms)',
     portal: { label: 'NATS portal', url: 'https://nats.education.gov.in' },
-    openTo: ['diploma', 'undergraduate'],
+    openTo: ['diploma', 'btech-student', 'undergraduate'],
     notes: 'One year of real industry training with a certificate that counts as experience. Employers often convert apprentices into full-time staff.',
   },
   {
@@ -36,7 +36,7 @@ export const OPPORTUNITIES: Opportunity[] = [
     eligibility: 'Any jobseeker with basic education details; separate listings for ITI, diploma and graduate candidates',
     stipend: 'Varies by employer listing (many are paid full-time roles)',
     portal: { label: 'National Career Service', url: 'https://www.ncs.gov.in' },
-    openTo: ['class10', 'class12-science', 'class12-commerce', 'class12-arts', 'iti', 'diploma', 'undergraduate'],
+    openTo: ['class10', 'class12-science', 'class12-commerce', 'class12-arts', 'iti', 'diploma', 'btech-student', 'b-ed-student', 'undergraduate'],
     notes: 'Free government job-matching platform. Also lists local job fairs, which are often the fastest route for ITI holders.',
   },
   {
@@ -47,7 +47,7 @@ export const OPPORTUNITIES: Opportunity[] = [
     eligibility: 'Students enrolled in AICTE-approved technical institutions',
     stipend: 'Stipend varies by company; many are unpaid but carry a certificate and industry exposure',
     portal: { label: 'AICTE internship portal', url: 'https://internship.aicte-india.org' },
-    openTo: ['diploma', 'undergraduate'],
+    openTo: ['diploma', 'btech-student', 'undergraduate'],
     notes: 'Best used in the second year onward. A verified internship on the resume matters more than the stipend at this stage.',
   },
   {
@@ -58,7 +58,7 @@ export const OPPORTUNITIES: Opportunity[] = [
     eligibility: 'Open to anyone; exams are held at designated centres for a small fee',
     stipend: 'No stipend — but low-cost certified learning from IIT and IISc faculty',
     portal: { label: 'SWAYAM', url: 'https://swayam.gov.in' },
-    openTo: ['class12-science', 'class12-commerce', 'class12-arts', 'iti', 'diploma', 'undergraduate'],
+    openTo: ['class12-science', 'class12-commerce', 'class12-arts', 'iti', 'diploma', 'btech-student', 'b-ed-student', 'undergraduate'],
     notes: 'A genuinely credible certificate for a student who cannot afford coaching. Combine with a project to make it count.',
   },
   {
@@ -80,7 +80,7 @@ export const OPPORTUNITIES: Opportunity[] = [
     eligibility: 'School and college teams; school-level versions accept Class 6 and above in many editions',
     stipend: 'Prize money for winners, with mentorship and incubation support in some tracks',
     portal: { label: 'Smart India Hackathon', url: 'https://sih.gov.in' },
-    openTo: ['class10', 'class12-science', 'diploma', 'undergraduate'],
+    openTo: ['class10', 'class12-science', 'diploma', 'btech-student', 'undergraduate'],
     notes: 'Team-based, so a student with coding or design skills can join a college team. Real problem statements come from ministries.',
   },
   {
@@ -91,7 +91,7 @@ export const OPPORTUNITIES: Opportunity[] = [
     eligibility: 'Open to students and beginners; teams self-organise and local venues host the event',
     stipend: 'No stipend — certificates, mentorship and a portfolio project you can show in interviews',
     portal: { label: 'NASA Space Apps Challenge', url: 'https://www.spaceappschallenge.org' },
-    openTo: ['class12-science', 'diploma', 'undergraduate'],
+    openTo: ['class12-science', 'diploma', 'btech-student', 'undergraduate'],
     notes: 'A weekend event that gives a beginner an actual project and teamwork experience. Very good for students without college placements.',
   },
   {
