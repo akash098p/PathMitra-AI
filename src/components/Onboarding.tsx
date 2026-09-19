@@ -37,7 +37,6 @@ export function Onboarding({
   const [step, setStep] = useState(0);
   const [profile, setProfile] = useState<StudentProfile>({ ...EMPTY_PROFILE, ...initial });
   const [answers, setAnswers] = useState<Record<string, number>>({});
-  const [questionIndex, setQuestionIndex] = useState(0);
 
   const patch = (part: Partial<StudentProfile>) => setProfile((prev) => ({ ...prev, ...part }));
 
@@ -142,28 +141,35 @@ export function Onboarding({
         {step === 2 && (
           <>
             <div>
-              <h2 className="text-sm font-bold text-slate-900">{INTEREST_QUESTIONS[questionIndex].prompt}</h2>
-              <p className="text-[11px] text-slate-500 mt-1">
-                Question {questionIndex + 1} of {INTEREST_QUESTIONS.length} — pick the closest answer, not the impressive one.
+              <h2 className="text-sm font-bold text-slate-900">What you enjoy</h2>
+              <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                Pick the closest answer for each question. These answers shape every recommendation you see.
               </p>
             </div>
-            <div className="space-y-2">
-              {INTEREST_QUESTIONS[questionIndex].options.map((option, optionIndex) => {
-                const active = answers[INTEREST_QUESTIONS[questionIndex].id] === optionIndex;
-                return (
-                  <div
-                    key={option.label}
-                    onClick={() => setAnswers((prev) => ({ ...prev, [INTEREST_QUESTIONS[questionIndex].id]: optionIndex }))}
-                    className={`cursor-pointer rounded-2xl border p-3.5 flex items-start gap-3 transition ${
-                      active ? "bg-indigo-50 border-indigo-300" : "bg-white border-slate-100 hover:border-indigo-200"
-                    }`}
-                  >
-                    <span className="text-lg leading-none mt-0.5">{option.emoji}</span>
-                    <p className="text-[11px] text-slate-800 flex-1 leading-relaxed">{option.label}</p>
-                    {active ? <span className="text-indigo-600 text-xs font-bold">✓</span> : null}
+            <div className="space-y-4">
+              {INTEREST_QUESTIONS.map((question) => (
+                <div key={question.id} className="space-y-2">
+                  <h3 className="text-xs font-bold text-slate-900 leading-relaxed">{question.prompt}</h3>
+                  <div className="space-y-2">
+                    {question.options.map((option, optionIndex) => {
+                      const active = answers[question.id] === optionIndex;
+                      return (
+                        <div
+                          key={`${question.id}-${option.label}`}
+                          onClick={() => setAnswers((prev) => ({ ...prev, [question.id]: optionIndex }))}
+                          className={`cursor-pointer rounded-2xl border p-3.5 flex items-start gap-3 transition ${
+                            active ? 'bg-indigo-50 border-indigo-300' : 'bg-white border-slate-100 hover:border-indigo-200'
+                          }`}
+                        >
+                          <span className="text-lg leading-none mt-0.5">{option.emoji}</span>
+                          <p className="text-[11px] text-slate-800 flex-1 leading-relaxed">{option.label}</p>
+                          {active ? <span className="text-indigo-600 text-xs font-bold">✓</span> : null}
+                        </div>
+                      );
+                    })}
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           </>
         )}
@@ -271,13 +277,7 @@ export function Onboarding({
         <div className="flex gap-2">
           {step > 0 && step < 4 ? (
             <button
-              onClick={() => {
-                if (step === 2 && questionIndex > 0) {
-                  setQuestionIndex((i) => i - 1);
-                } else {
-                  setStep((s) => s - 1);
-                }
-              }}
+              onClick={() => setStep((s) => s - 1)}
               className="px-4 py-3 rounded-2xl border border-slate-200 text-slate-600 text-xs font-semibold"
             >
               Back
@@ -291,16 +291,10 @@ export function Onboarding({
           )}
           {step === 2 && (
             <PrimaryButton
-              onClick={() => {
-                if (questionIndex < INTEREST_QUESTIONS.length - 1) {
-                  setQuestionIndex((i) => i + 1);
-                } else {
-                  finishInterestStep();
-                }
-              }}
-              disabled={answers[INTEREST_QUESTIONS[questionIndex].id] === undefined}
+              onClick={() => finishInterestStep()}
+              disabled={INTEREST_QUESTIONS.some((question) => answers[question.id] === undefined)}
             >
-              {questionIndex < INTEREST_QUESTIONS.length - 1 ? "Next question" : "Continue to family constraints"}
+              Continue to family constraints
             </PrimaryButton>
           )}
           {step === 3 && <PrimaryButton onClick={() => setStep(4)}>Show my matches</PrimaryButton>}
