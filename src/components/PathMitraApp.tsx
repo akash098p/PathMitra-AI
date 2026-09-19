@@ -313,7 +313,7 @@ export default function PathMitraApp() {
         <div ref={contentRef} className="flex-1 overflow-y-auto">{renderScreen()}</div>
       </div>
 
-      <nav className="bg-[#fffaf3]/90 backdrop-blur-sm border-t border-[#eadfce] px-2 py-2 flex justify-between items-center z-40">
+      <nav className="bg-[#f9f3ea]/90 backdrop-blur-sm border-t border-[#e9dfd3] px-2 py-2 flex justify-between items-center z-40 shadow-[0_-6px_16px_rgba(15,23,42,0.04)]">
         {TABS.map((tab) => {
           const active = route.tab === tab.id;
           return (
@@ -321,14 +321,14 @@ export default function PathMitraApp() {
               key={tab.id}
               onClick={() => setRoute({ tab: tab.id })}
               className={`relative flex flex-col items-center justify-end flex-1 min-h-[54px] py-1 rounded-2xl transition-all duration-300 ${
-                active ? 'text-indigo-700 bg-indigo-50/80' : 'text-slate-400 hover:text-slate-600'
+                active ? 'text-indigo-700 bg-indigo-50/80' : 'text-slate-500 hover:text-slate-700'
               }`}
             >
               <span
                 className={`flex items-center justify-center transition-all duration-300 ${
                   active
                     ? '-mt-7 mb-1 w-12 h-12 rounded-full bg-indigo-600 text-white shadow-[0_8px_18px_rgba(79,70,229,0.4)] ring-4 ring-white'
-                    : 'w-6 h-6'
+                    : 'w-6 h-6 text-slate-600'
                 }`}
               >
                 {tab.icon}
