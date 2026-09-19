@@ -136,6 +136,46 @@ function scholarshipAnswer(profile: StudentProfile): LocalAnswer {
   return { reply, source: 'brain-cache:scholarships', usedLinks: list.map((s) => s.portal.url) };
 }
 
+function svmcmAnswer(): LocalAnswer {
+  return {
+    reply: [
+      '🎓 **SVMCM scholarship**',
+      '',
+      bullet('SVMCM means Swami Vivekananda Merit-cum-Means Scholarship, a West Bengal government scholarship.'),
+      bullet('It is generally for meritorious students from families within the notified income limit, from higher secondary through higher education and technical or professional courses.'),
+      bullet('Eligibility, marks cut-offs, income ceiling and award amounts depend on the current course and notification.'),
+      bullet('Keep your marksheet, income certificate, bank details, Aadhaar and institution verification documents ready.'),
+      '',
+      'Check the current rules and application window on the official portal before applying.',
+      linkBlock([{ label: 'SVMCM official portal', url: 'https://svmcm.wb.gov.in' }]),
+    ].join('\n'),
+    source: 'brain-cache:scholarship',
+    usedLinks: ['https://svmcm.wb.gov.in'],
+  };
+}
+
+function isGenericScholarshipQuestion(q: string): boolean {
+  if (!/scholar(ship)?|scolar(ship)?|freeship|fee waiver/.test(q)) return false;
+
+  const specificMarkers = [
+    'indian oil',
+    'iocl',
+    'corporation',
+    'company',
+    'foundation',
+    'trust',
+    'limited',
+    'scheme',
+    'organization',
+    'organisation',
+  ];
+  return !specificMarkers.some((marker) => q.includes(marker));
+}
+
+function isOrganizationScholarshipQuestion(q: string): boolean {
+  return /scholar(ship)?|scolar(ship)?|freeship|fee waiver/.test(q) && !isGenericScholarshipQuestion(q);
+}
+
 function escapeRegExp(text: string): string {
   return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -549,6 +589,10 @@ export function answerLocally(question: string, profile: StudentProfile): LocalA
   const smallTalk = smallTalkAnswer(q, profile);
   if (smallTalk) return smallTalk;
 
+  // Do not let broad dataset matchers turn a named company's scholarship
+  // question into an unrelated career or pathway answer.
+  if (isOrganizationScholarshipQuestion(q)) return null;
+
   // 1. Comparison questions ("X vs Y", "which is better") come before single
   // matches so a two-option query never collapses into one exam card.
   const comparison = comparisonAnswer(q, profile);
@@ -560,7 +604,11 @@ export function answerLocally(question: string, profile: StudentProfile): LocalA
     (q.includes('diploma') || q.includes('polytechnic') || q.includes('b.tech') || q.includes('btech'));
   if (lateralIntent) return lateralEntryAnswer();
 
-  if (q.includes('scholarship') || q.includes('freeship') || q.includes('fee waiver')) {
+  if (q.includes('svmcm') || q.includes('svm cms') || q.includes('swami vivekananda merit')) {
+    return svmcmAnswer();
+  }
+
+  if (isGenericScholarshipQuestion(q)) {
     return scholarshipAnswer(profile);
   }
 
