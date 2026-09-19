@@ -11,6 +11,8 @@ export type QualificationId =
   | 'class12-arts'
   | 'diploma'
   | 'iti'
+  | 'btech-student'
+  | 'b-ed-student'
   | 'undergraduate';
 
 export type InterestId =
@@ -40,7 +42,16 @@ export type PathwayId =
   | 'polytechnic'
   | 'iti'
   | 'bca'
-  | 'paramedical';
+  | 'paramedical'
+  | 'engineering'
+  | 'd-pharm'
+  | 'b-pharm'
+  | 'nursing'
+  | 'general-degree'
+  | 'b-ed'
+  | 'm-sc'
+  | 'phd'
+  | 'vocational';
 
 export type PriorityId =
   | 'low-fees'
