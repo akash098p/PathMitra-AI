@@ -25,6 +25,7 @@ export const EMPTY_PROFILE: StudentProfile = {
   priorities: [],
   completedMilestones: [],
   savedPathways: [],
+  savedExams: [],
   onboarded: false,
 };
 
@@ -125,4 +126,12 @@ export function describeProfile(profile: StudentProfile): string {
     bits.push(`priorities: ${profile.priorities.map((p) => PRIORITY_LABELS[p]).join(', ')}`);
   }
   return bits.join(' | ');
+}
+
+export function toggleSavedExam(profile: StudentProfile, examId: string): StudentProfile {
+  const saved = profile.savedExams.includes(examId);
+  return {
+    ...profile,
+    savedExams: saved ? profile.savedExams.filter((id) => id !== examId) : [...profile.savedExams, examId],
+  };
 }
