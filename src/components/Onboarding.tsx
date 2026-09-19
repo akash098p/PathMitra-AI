@@ -123,7 +123,7 @@ export function Onboarding({
                     key={q.id}
                     onClick={() => patch({ qualification: q.id })}
                     className={`cursor-pointer rounded-2xl border p-3.5 flex items-start gap-3 transition ${
-                      active ? 'bg-indigo-50 border-indigo-300' : 'bg-white border-slate-100 hover:border-indigo-200'
+                      active ? 'bg-indigo-50 border-indigo-300' : 'bg-white border-slate-200 hover:border-indigo-400'
                     }`}
                   >
                     <span className="text-xl leading-none mt-0.5">{q.emoji}</span>
@@ -158,7 +158,7 @@ export function Onboarding({
                           key={`${question.id}-${option.label}`}
                           onClick={() => setAnswers((prev) => ({ ...prev, [question.id]: optionIndex }))}
                           className={`cursor-pointer rounded-2xl border p-3.5 flex items-start gap-3 transition ${
-                            active ? 'bg-indigo-50 border-indigo-300' : 'bg-white border-slate-100 hover:border-indigo-200'
+                            active ? 'bg-indigo-50 border-indigo-300' : 'bg-white border-slate-200 hover:border-indigo-400'
                           }`}
                         >
                           <span className="text-lg leading-none mt-0.5">{option.emoji}</span>
