@@ -11,9 +11,17 @@ import type { Link } from '@/lib/types';
 
 export function PhoneFrame({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-0 sm:p-6">
-      <div className="relative w-full max-w-[430px] h-[100dvh] sm:h-[900px] bg-slate-50 sm:rounded-[42px] shadow-2xl overflow-hidden border-0 sm:border-[8px] border-slate-800 flex flex-col">
-        {children}
+    <div className="min-h-screen bg-[#faf6f0] flex items-center justify-center p-0 sm:p-6">
+      <div className="relative w-full max-w-[430px] h-[100dvh] sm:h-[900px] bg-[#fffdf9] sm:rounded-[42px] shadow-2xl overflow-hidden border-0 sm:border-[8px] border-[#ded6cc] flex flex-col">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+          <span className="absolute -left-24 top-24 h-64 w-64 rounded-full bg-[#ffede1]/65" />
+          <span className="absolute -right-28 top-[-3rem] h-72 w-72 rounded-[42%] rotate-12 bg-[#f0eaff]/60" />
+          <span className="absolute bottom-24 -right-20 h-64 w-64 rounded-full bg-[#e7f8ef]/65" />
+          <span className="absolute bottom-[-5rem] left-10 h-36 w-56 -rotate-12 rounded-[45%] bg-[#fff7d8]/70" />
+          <span className="absolute left-8 top-1/2 h-20 w-20 rounded-full border-[10px] border-[#ffe1d5]/70" />
+          <span className="absolute right-10 top-1/3 h-5 w-5 rounded-full bg-[#f9d4df]/70" />
+        </div>
+        <div className="relative z-10 flex min-h-0 flex-1 flex-col">{children}</div>
       </div>
     </div>
   );

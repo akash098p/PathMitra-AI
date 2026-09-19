@@ -56,7 +56,7 @@ export function Onboarding({
   const stepTitles = ['Welcome', 'Where you are', 'What you enjoy', 'Family constraints', 'Your matches'];
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden bg-slate-50">
+    <div className="flex-1 flex flex-col overflow-hidden bg-transparent">
       <div className="px-4 pt-6 pb-3">
         <div className="flex items-center gap-1.5">
           {[0, 1, 2, 3, 4].map((i) => (

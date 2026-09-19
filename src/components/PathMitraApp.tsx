@@ -280,8 +280,8 @@ export default function PathMitraApp() {
 
   return (
     <PhoneFrame>
-      <div className="flex-1 flex flex-col overflow-hidden bg-slate-50">
-        <div className="px-4 pt-5 pb-2 bg-white border-b border-slate-100">
+      <div className="flex-1 flex flex-col overflow-hidden bg-transparent">
+        <div className="px-4 pt-5 pb-2 bg-[#fffaf3]/85 backdrop-blur-sm border-b border-[#eadfce]">
             <ScreenHeader
               title={headerTitle}
               subtitle={headerSubtitle}
@@ -308,7 +308,7 @@ export default function PathMitraApp() {
         <div className="flex-1 overflow-y-auto">{renderScreen()}</div>
       </div>
 
-      <nav className="bg-white border-t border-slate-100 px-2 py-2 flex justify-between items-center z-40">
+      <nav className="bg-[#fffaf3]/90 backdrop-blur-sm border-t border-[#eadfce] px-2 py-2 flex justify-between items-center z-40">
         {TABS.map((tab) => {
           const active = route.tab === tab.id;
           return (
