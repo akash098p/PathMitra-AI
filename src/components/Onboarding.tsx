@@ -75,7 +75,13 @@ export function Onboarding({
         {step === 0 && (
           <>
             <div className="text-center pt-4">
-              <div className="text-4xl mb-2">🧭</div>
+              <div className="flex justify-center mb-3">
+                <img
+                  src="/welcome.png"
+                  alt="Student exploring education and career paths"
+                  className="w-full max-w-[390px] h-[285px] object-contain"
+                />
+              </div>
               <h1 className="text-lg font-bold text-slate-900 leading-tight">
                 Namaste! I am PathMitra,
                 <br />
