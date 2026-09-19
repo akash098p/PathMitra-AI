@@ -78,11 +78,11 @@ export function Card({
   className?: string;
   onClick?: () => void;
 }) {
-  const interactive = onClick ? 'cursor-pointer hover:border-indigo-200 active:scale-[0.99] transition' : '';
+  const interactive = onClick ? 'cursor-pointer hover:border-indigo-400 active:scale-[0.99] transition' : '';
   return (
     <div
       onClick={onClick}
-      className={`bg-white rounded-2xl border border-slate-100 shadow-xs p-4 ${interactive} ${className}`}
+      className={`bg-white rounded-2xl border border-slate-200 shadow-xs p-4 ${interactive} ${className}`}
     >
       {children}
     </div>
