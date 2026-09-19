@@ -79,7 +79,7 @@ export function ProfileScreen({
         </header>
       )}
 
-      <Card className="space-y-3">
+      {hideAdvanced ? <Card className="space-y-3">
         <SectionTitle>Personal details</SectionTitle>
         <label className="block">
           <span className="text-[9px] font-bold uppercase tracking-wide text-slate-400">Name</span>
@@ -111,7 +111,7 @@ export function ProfileScreen({
             />
           </label>
         </div>
-      </Card>
+      </Card> : null}
 
       {hideAdvanced ? (
         <div className="flex gap-2">
