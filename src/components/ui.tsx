@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ChevronLeft, ExternalLink, ShieldCheck, Info } from 'lucide-react';
+import { Bell, ChevronLeft, ExternalLink, GraduationCap, ShieldCheck, Info } from 'lucide-react';
 import type { Link } from '@/lib/types';
 
 // ============================================================================
@@ -30,24 +30,41 @@ export function ScreenHeader({
   onBack?: () => void;
   right?: React.ReactNode;
 }) {
+  const fallbackRight = (
+    <button
+      aria-label="Notifications"
+      className="p-2 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition"
+    >
+      <Bell className="w-4 h-4" />
+    </button>
+  );
+
   return (
-    <header className="flex items-center justify-between gap-2 py-1">
-      {onBack ? (
-        <button
-          onClick={onBack}
-          aria-label="Go back"
-          className="p-2 -ml-1 rounded-xl text-slate-700 hover:bg-slate-100 transition"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-      ) : (
-        <div className="w-9" />
-      )}
-      <div className="flex-1 min-w-0 text-center">
-        <h2 className="text-sm font-bold text-slate-900 truncate">{title}</h2>
-        {subtitle ? <p className="text-[10px] text-slate-500 truncate">{subtitle}</p> : null}
+    <header className="px-2 pt-2 pb-1">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs px-3 py-2.5 flex items-center gap-3">
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+          {onBack ? (
+            <button
+              onClick={onBack}
+              aria-label="Go back"
+              className="p-1.5 rounded-xl text-slate-700 hover:bg-slate-100 transition"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+          ) : (
+            <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center shadow-sm">
+              <GraduationCap className="w-4 h-4 text-white" />
+            </div>
+          )}
+
+          <div className="min-w-0 flex-1">
+            <h2 className="text-[11px] font-black uppercase tracking-[0.12em] text-indigo-700 truncate">{title}</h2>
+            <p className="text-[9px] text-slate-500 truncate">{subtitle ?? 'Your AI Guide to Career'}</p>
+          </div>
+        </div>
+
+        <div className="w-9 flex justify-end shrink-0">{right ?? fallbackRight}</div>
       </div>
-      <div className="w-9 flex justify-end">{right}</div>
     </header>
   );
 }
