@@ -62,6 +62,10 @@ export function AdvisorScreen({ profile }: { profile: StudentProfile }) {
             risk: profile.risk,
             priorities: profile.priorities,
           },
+          history: messages.slice(-10).map((message) => ({
+            role: message.sender === 'user' ? 'user' : 'assistant',
+            content: message.text,
+          })),
         }),
       });
       const data = (await res.json()) as { reply?: string; source?: string };
@@ -129,11 +133,6 @@ export function AdvisorScreen({ profile }: { profile: StudentProfile }) {
               }`}
             >
               <MarkdownMessage text={msg.text} sender={msg.sender} />
-              {msg.source ? (
-                <p className="text-[8px] text-slate-300 mt-2 uppercase tracking-wider">
-                  answered from {msg.source.replace('brain-cache:', 'PathMitra data — ')}
-                </p>
-              ) : null}
             </div>
           </div>
         ))}
