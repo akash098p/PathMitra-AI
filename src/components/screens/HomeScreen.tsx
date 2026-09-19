@@ -43,7 +43,7 @@ export function HomeScreen({
   onOpenPathway: (pathwayId: string) => void;
   back?: () => void;
 }) {
-  const recommendations = scorePathways(profile, 3);
+  const recommendations = scorePathways(profile, 100);
   const qualification = QUALIFICATIONS.find((q) => q.id === profile.qualification);
   const interestCount = profile.interests.length;
   const [activeIndex, setActiveIndex] = useState(0);
@@ -101,6 +101,7 @@ export function HomeScreen({
   }, [displayGreeting]);
 
   useEffect(() => {
+    setActiveIndex((prev) => (recommendations.length ? prev % recommendations.length : 0));
     if (recommendations.length <= 1) return;
 
     const timer = window.setInterval(() => {
@@ -227,7 +228,7 @@ export function HomeScreen({
           <div
             key={action.id}
             onClick={() => onOpenScreen(action.id)}
-            className="cursor-pointer bg-white rounded-2xl p-3 border border-slate-100 shadow-xs hover:border-indigo-200 transition"
+            className="cursor-pointer bg-white rounded-2xl p-3 border border-slate-200 shadow-xs hover:border-indigo-400 transition"
           >
             <div className={`p-2 rounded-xl w-fit mb-2 ${action.tone}`}>{action.icon}</div>
             <h4 className="text-[11px] font-bold text-slate-900 leading-snug">{action.label}</h4>
