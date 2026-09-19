@@ -107,21 +107,6 @@ export function AdvisorScreen({ profile }: { profile: StudentProfile }) {
         ) : null}
       </div>
 
-      <div className="px-4">
-        <div className="flex gap-1.5 overflow-x-auto pb-1.5 no-scrollbar">
-          {QUICK_PROMPTS.map((prompt) => (
-            <button
-              key={prompt}
-              onClick={() => send(prompt)}
-              disabled={loading}
-              className="px-2.5 py-1 rounded-full border border-slate-200 bg-white text-slate-600 text-[10px] font-medium whitespace-nowrap hover:border-indigo-200 hover:text-indigo-700 transition disabled:opacity-50"
-            >
-              {prompt.length > 38 ? `${prompt.slice(0, 38)}…` : prompt}
-            </button>
-          ))}
-        </div>
-      </div>
-
       <div className="flex-1 overflow-y-auto px-4 py-2 space-y-2.5">
         {messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -150,6 +135,18 @@ export function AdvisorScreen({ profile }: { profile: StudentProfile }) {
       </div>
 
       <div className="px-4 py-3 border-t border-slate-100 bg-white">
+        <div className="flex gap-1.5 overflow-x-auto pb-2 no-scrollbar">
+          {QUICK_PROMPTS.map((prompt) => (
+            <button
+              key={prompt}
+              onClick={() => send(prompt)}
+              disabled={loading}
+              className="px-2.5 py-1 rounded-full border border-slate-200 bg-white text-slate-600 text-[10px] font-medium whitespace-nowrap hover:border-indigo-200 hover:text-indigo-700 transition disabled:opacity-50"
+            >
+              {prompt.length > 38 ? `${prompt.slice(0, 38)}…` : prompt}
+            </button>
+          ))}
+        </div>
         <div className="flex items-center gap-2">
           <input
             value={input}
