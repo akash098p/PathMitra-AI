@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Bot, Compass, Home, Map as MapIcon, User } from 'lucide-react';
 import { Onboarding } from '@/components/Onboarding';
 import { HomeScreen } from '@/components/screens/HomeScreen';
@@ -68,11 +68,16 @@ export default function PathMitraApp() {
   const [route, setRoute] = useState<Route>({ tab: 'home' });
   const [backStack, setBackStack] = useState<Route[]>([]);
   const [hydrated, setHydrated] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setProfile(loadProfile());
     setHydrated(true);
   }, []);
+
+  useEffect(() => {
+    contentRef.current?.scrollTo({ top: 0, behavior: 'auto' });
+  }, [route.tab, route.sub, route.param]);
 
   function update(next: StudentProfile) {
     setProfile(next);
@@ -305,7 +310,7 @@ export default function PathMitraApp() {
             />
         </div>
 
-        <div className="flex-1 overflow-y-auto">{renderScreen()}</div>
+        <div ref={contentRef} className="flex-1 overflow-y-auto">{renderScreen()}</div>
       </div>
 
       <nav className="bg-[#fffaf3]/90 backdrop-blur-sm border-t border-[#eadfce] px-2 py-2 flex justify-between items-center z-40">
