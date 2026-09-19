@@ -101,7 +101,15 @@ export function ExamsScreen({
     if (filter === 'national') return exam.level === 'national';
     if (filter === 'state') return exam.level === 'state';
     if (filter === 'mine') {
-      return profile.qualification ? exam.openTo.includes(profile.qualification) : true;
+      if (!profile.qualification) return true;
+      if (exam.openTo.includes(profile.qualification)) return true;
+      if (profile.qualification === 'btech-student') {
+        return exam.id === 'nats' || exam.category.includes('Engineering') || exam.category.includes('University');
+      }
+      if (profile.qualification === 'b-ed-student') {
+        return exam.id === 'ncet' || exam.category.includes('Teacher education');
+      }
+      return false;
     }
     return true;
   }).sort((a, b) => a.shortName.localeCompare(b.shortName));
