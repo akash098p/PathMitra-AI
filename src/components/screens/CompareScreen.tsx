@@ -33,7 +33,8 @@ export function CompareScreen({
 }) {
   const [selected, setSelected] = useState<PathwayId[]>(() => {
     const eligible = PATHWAYS.filter((p) => p.startsAfter.includes(profile.qualification as typeof p.startsAfter[number]));
-    return eligible.slice(0, 2).map((p) => p.id);
+    const defaults = eligible.length >= 2 ? eligible : PATHWAYS;
+    return defaults.slice(0, 2).map((p) => p.id);
   });
 
   function toggle(id: PathwayId) {
