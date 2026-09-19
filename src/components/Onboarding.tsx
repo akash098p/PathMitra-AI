@@ -75,11 +75,15 @@ export function Onboarding({
         {step === 0 && (
           <>
             <div className="text-center pt-4">
-              <div className="flex justify-center mb-3">
+              <div className="relative mx-auto mb-3 h-[290px] w-full max-w-[390px] overflow-hidden rounded-[2rem] bg-[#edf4ff]">
+                <span aria-hidden="true" className="absolute -right-10 -top-12 h-40 w-40 rotate-12 rounded-[42%] bg-[#c9e8ff]" />
+                <span aria-hidden="true" className="absolute -left-12 bottom-5 h-24 w-52 -rotate-6 rounded-[45%] bg-[#d8f5df]" />
+                <span aria-hidden="true" className="absolute bottom-[-2rem] right-8 h-24 w-36 rotate-[-18deg] rounded-full border-[10px] border-[#ffd98a]" />
+                <span aria-hidden="true" className="absolute left-10 top-8 h-5 w-5 rounded-full bg-[#ffb4c8]" />
                 <img
                   src="/welcome.png"
                   alt="Student exploring education and career paths"
-                  className="w-full max-w-[390px] h-[285px] object-contain"
+                  className="relative z-10 h-full w-full object-contain"
                 />
               </div>
               <h1 className="text-lg font-bold text-slate-900 leading-tight">

@@ -6,6 +6,7 @@ import { SKILL_TRACKS } from '@/data/skills';
 import { OPPORTUNITIES } from '@/data/opportunities';
 import { STATES } from '@/data/states';
 import { describeProfile } from '@/lib/profile';
+import { getTimeGreeting } from '@/lib/greeting';
 import type { Link, StudentProfile } from '@/lib/types';
 
 // ============================================================================
@@ -193,7 +194,7 @@ function smallTalkAnswer(q: string, profile: StudentProfile): LocalAnswer | null
   if (/^(hi|hii+|hello|hey|namaste|namaskar|good\s?(morning|afternoon|evening)|yo|sup)\b[!.\s]*$/.test(trimmed)) {
     return {
       reply: [
-        `👋 **Namaste${saidName}! I am PathMitra, your education-to-career guide.**`,
+        `👋 **${getTimeGreeting()}${saidName}! I am PathMitra, your education-to-career guide.**`,
         '',
         bullet('Ask me to compare two routes — for example "diploma vs B.Tech in computer science"'),
         bullet('Ask about any exam, scholarship, government or private job, or skill to learn'),

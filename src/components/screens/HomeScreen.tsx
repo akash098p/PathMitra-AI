@@ -14,6 +14,7 @@ import {
   GraduationCap,
 } from 'lucide-react';
 import { scorePathways } from '@/lib/recommend';
+import { getTimeGreeting } from '@/lib/greeting';
 import { INTERESTS, QUALIFICATIONS } from '@/data/qualifications';
 import type { StudentProfile } from '@/lib/types';
 import { Bullet, Card, ScoreBadge, SectionTitle, Tag, TrustNote } from '@/components/ui';
@@ -50,7 +51,7 @@ export function HomeScreen({
   const [typedGreeting, setTypedGreeting] = useState('');
   const [isShaking, setIsShaking] = useState(false);
   const touchStartX = useRef<number | null>(null);
-  const displayGreeting = profile.name ? `Namaste, ${profile.name}` : 'Namaste';
+  const displayGreeting = profile.name ? `${getTimeGreeting()}, ${profile.name}` : getTimeGreeting();
 
   useEffect(() => {
     let frame: number | undefined;
@@ -136,7 +137,6 @@ export function HomeScreen({
         <p className="text-[10px] font-bold uppercase tracking-wider text-indigo-600">PathMitra AI</p>
         <h1 className="text-base font-bold text-slate-900 leading-tight min-h-[1.6em]">
           <span className="inline-block">{typedGreeting}</span>
-          <span className="inline-block ml-0.5 w-[2px] h-4 align-middle rounded bg-slate-700 animate-pulse" />
           <span
             className="inline-block origin-bottom"
             style={isShaking ? { animation: 'shake 0.9s ease-in-out 1' } : undefined}

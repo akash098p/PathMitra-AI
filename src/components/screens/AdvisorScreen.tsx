@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Send, Sparkles } from 'lucide-react';
 import { MarkdownMessage } from '@/components/MarkdownMessage';
 import { describeProfile } from '@/lib/profile';
+import { getTimeGreeting } from '@/lib/greeting';
 import type { StudentProfile } from '@/lib/types';
 
 // ============================================================================
@@ -27,11 +28,13 @@ const QUICK_PROMPTS = [
   'How do I prepare for JEXPO and what does it open?',
 ];
 
-const GREETING =
-  'Namaste! I am PathMitra. I can answer questions about streams, diplomas, ITI trades, entrance exams, government and private jobs, scholarships and the skills worth learning — using the same verified data as the rest of this guide. What would you like to understand better?';
-
 export function AdvisorScreen({ profile }: { profile: StudentProfile }) {
-  const [messages, setMessages] = useState<ChatMessage[]>([{ sender: 'ai', text: GREETING }]);
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      sender: 'ai',
+      text: `${getTimeGreeting()}! I am PathMitra. I can answer questions about streams, diplomas, ITI trades, entrance exams, government and private jobs, scholarships and the skills worth learning — using the same verified data as the rest of this guide. What would you like to understand better?`,
+    },
+  ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);

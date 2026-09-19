@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { RotateCcw, Heart } from 'lucide-react';
 import { QUALIFICATIONS, INTERESTS } from '@/data/qualifications';
 import { PATHWAYS } from '@/data/pathways';
@@ -297,6 +298,24 @@ export function ProfileScreen({
           </p>
         </>
       )}
+
+      {hideAdvanced ? (
+        <div className="relative mx-auto aspect-[1368/1145] w-full max-w-[24rem] overflow-hidden rounded-[2rem] bg-[#f4f0ff]">
+          <span aria-hidden="true" className="absolute -left-14 top-16 z-0 h-44 w-44 rounded-full bg-[#b8ddff]" />
+          <span aria-hidden="true" className="absolute -right-14 top-4 z-0 h-40 w-40 rounded-full bg-[#b9efd4]" />
+          <span aria-hidden="true" className="absolute left-8 top-[-2rem] z-0 h-32 w-48 rotate-[-18deg] rounded-[44%] bg-[#c7b8ff]" />
+          <span aria-hidden="true" className="absolute bottom-[-2rem] left-8 z-0 h-28 w-48 rotate-6 rounded-full border-[12px] border-[#ffc96f]" />
+          <span aria-hidden="true" className="absolute bottom-12 right-10 z-0 h-7 w-7 rounded-full bg-[#ff8faf]" />
+          <span aria-hidden="true" className="absolute right-8 top-24 z-0 h-16 w-16 rounded-full border-4 border-white/80" />
+          <Image
+            src="/profile%20edit.png"
+            alt="Student exploring education and career paths"
+            width={1368}
+            height={1145}
+            className="relative z-10 h-full w-full object-contain"
+          />
+        </div>
+      ) : null}
     </div>
   );
 }
