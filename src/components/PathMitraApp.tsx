@@ -25,7 +25,7 @@ import type { PathwayId, StudentProfile } from '@/lib/types';
 // route = { tab, sub, param } so deep screens can always return cleanly.
 // ============================================================================
 
-type Tab = 'home' | 'explore' | 'guide' | 'advisor' | 'profile';
+type Tab = 'home' | 'explore' | 'guide' | 'advisor' | 'profile' | 'profile-edit';
 
 interface Route {
   tab: Tab;
@@ -200,6 +200,16 @@ export default function PathMitraApp() {
         return <AdvisorScreen profile={profile} />;
       case 'profile':
         return <ProfileScreen profile={profile} onUpdate={update} onRestart={() => setRoute({ tab: 'home' })} />;
+      case 'profile-edit':
+        return (
+          <ProfileScreen
+            profile={profile}
+            onUpdate={update}
+            onRestart={() => setRoute({ tab: 'home' })}
+            hideAdvanced={true}
+            onClose={() => setRoute({ tab: 'home' })}
+          />
+        );
       default:
         return null;
     }
@@ -250,13 +260,16 @@ export default function PathMitraApp() {
               }
               right={
                 route.tab === 'home' ? (
-                  <button
-                    onClick={() => resetStack()}
-                    aria-label="Open profile"
-                    className="w-8 h-8 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-bold flex items-center justify-center"
-                  >
-                    {profile.name ? profile.name.slice(0, 1).toUpperCase() : '☺'}
-                  </button>
+                  <div className="relative flex items-center justify-center w-10 h-10">
+                    <div className="absolute inset-0 rounded-full border-[2px] border-amber-300 shadow-[0_0_0_2px_rgba(251,191,36,0.35)] animate-[spin_4s_linear_infinite]" />
+                    <button
+                      onClick={() => setRoute({ tab: 'profile-edit' })}
+                      aria-label="Open profile editor"
+                      className="relative z-10 w-8 h-8 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-bold flex items-center justify-center"
+                    >
+                      {profile.name ? profile.name.slice(0, 1).toUpperCase() : '☺'}
+                    </button>
+                  </div>
                 ) : undefined
               }
             />
