@@ -315,11 +315,19 @@ export default function PathMitraApp() {
             <button
               key={tab.id}
               onClick={() => setRoute({ tab: tab.id })}
-              className={`flex flex-col items-center flex-1 py-1 rounded-xl transition ${
-                active ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'
+              className={`relative flex flex-col items-center justify-end flex-1 min-h-[54px] py-1 rounded-2xl transition-all duration-300 ${
+                active ? 'text-indigo-700 bg-indigo-50/80' : 'text-slate-400 hover:text-slate-600'
               }`}
             >
-              {tab.icon}
+              <span
+                className={`flex items-center justify-center transition-all duration-300 ${
+                  active
+                    ? '-mt-7 mb-1 w-12 h-12 rounded-full bg-indigo-600 text-white shadow-[0_8px_18px_rgba(79,70,229,0.4)] ring-4 ring-white'
+                    : 'w-6 h-6'
+                }`}
+              >
+                {tab.icon}
+              </span>
               <span className={`text-[9px] mt-0.5 ${active ? 'font-bold' : 'font-medium'}`}>{tab.label}</span>
             </button>
           );
