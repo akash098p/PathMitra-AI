@@ -47,8 +47,8 @@ async function callGemini(profile: StudentProfile, message: string): Promise<str
       'x-goog-api-key': apiKey,
     },
     body: JSON.stringify({
+      systemInstruction: { parts: [{ text: geminiSystemPrompt(profile) }] },
       contents: [
-        { role: 'system', parts: [{ text: geminiSystemPrompt(profile) }] },
         { role: 'user', parts: [{ text: message }] },
       ],
       generationConfig: {
