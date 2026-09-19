@@ -223,6 +223,7 @@ export interface StudentProfile {
   priorities: PriorityId[];
   completedMilestones: string[];
   savedPathways: PathwayId[];
+  savedExams: string[];
   onboarded: boolean;
 }
 
