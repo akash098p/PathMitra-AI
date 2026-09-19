@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { CAREERS } from '@/data/careers';
+import { QUALIFICATIONS } from '@/data/qualifications';
 import type { StudentProfile } from '@/lib/types';
 import { Bullet, Card, Chip, KeyValue, Meter, SectionTitle, Tag } from '@/components/ui';
 
@@ -26,13 +27,17 @@ export function CareersScreen({
 }) {
   const [sector, setSector] = useState<'all' | 'govt' | 'private'>('all');
 
+  const allowedPathways = profile.qualification
+    ? QUALIFICATIONS.find((q) => q.id === profile.qualification)?.canChoose ?? []
+    : [];
+
   const visible = CAREERS.filter((c) => {
     if (sector === 'all') return true;
     if (sector === 'govt') return c.sector === 'govt' || c.sector === 'both';
     return c.sector === 'private' || c.sector === 'both';
   }).filter((c) => {
-    if (!profile.qualification) return true;
-    return c.entryPathways.some((p) => p.startsWith(profile.qualification.split('-')[0]));
+    if (!profile.qualification || allowedPathways.length === 0) return true;
+    return c.entryPathways.some((pathway) => allowedPathways.includes(pathway));
   });
 
   const govtCount = CAREERS.filter((c) => c.sector === 'govt' || c.sector === 'both').length;
