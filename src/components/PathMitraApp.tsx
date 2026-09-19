@@ -77,9 +77,9 @@ export default function PathMitraApp() {
     saveProfile(next);
   }
 
-  function go(route: Route) {
+  function go(nextRoute: Route) {
     setBackStack((prev) => [...prev, route]);
-    setRoute(route);
+    setRoute(nextRoute);
   }
 
   function back() {
@@ -245,7 +245,7 @@ export default function PathMitraApp() {
               subtitle={subMeta?.subtitle}
               onBack={
                 route.param || (route.tab === 'guide' && route.sub)
-                  ? () => setRoute(route.tab === 'guide' && route.sub ? { tab: 'guide' } : { tab: 'home' })
+                  ? back
                   : undefined
               }
               right={
