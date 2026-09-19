@@ -45,10 +45,60 @@ export function HomeScreen({
 }) {
   const recommendations = scorePathways(profile, 3);
   const qualification = QUALIFICATIONS.find((q) => q.id === profile.qualification);
-  const displayName = profile.name ? `, ${profile.name}` : '';
   const interestCount = profile.interests.length;
   const [activeIndex, setActiveIndex] = useState(0);
+  const [typedGreeting, setTypedGreeting] = useState('');
+  const [isShaking, setIsShaking] = useState(false);
   const touchStartX = useRef<number | null>(null);
+  const displayGreeting = profile.name ? `Namaste, ${profile.name}` : 'Namaste';
+
+  useEffect(() => {
+    let frame: number | undefined;
+    let index = 0;
+    let phase: 'typing' | 'paused' | 'shaking' | 'resetting' = 'typing';
+
+    const tick = () => {
+      if (phase === 'typing') {
+        index += 1;
+        setTypedGreeting(displayGreeting.slice(0, index));
+
+        if (index >= displayGreeting.length) {
+          phase = 'paused';
+          frame = window.setTimeout(() => {
+            setIsShaking(true);
+            phase = 'shaking';
+            frame = window.setTimeout(() => {
+              setIsShaking(false);
+              phase = 'resetting';
+              index = 0;
+              setTypedGreeting('');
+              frame = window.setTimeout(() => {
+                phase = 'typing';
+                tick();
+              }, 200);
+            }, 900);
+          }, 2000);
+          return;
+        }
+
+        frame = window.setTimeout(tick, 90);
+        return;
+      }
+
+      if (phase === 'paused') {
+        return;
+      }
+
+      if (phase === 'resetting') {
+        return;
+      }
+    };
+
+    tick();
+    return () => {
+      if (frame) window.clearTimeout(frame);
+    };
+  }, [displayGreeting]);
 
   useEffect(() => {
     if (recommendations.length <= 1) return;
@@ -83,7 +133,16 @@ export function HomeScreen({
     <div className="p-4 space-y-4">
       <header className="py-1">
         <p className="text-[10px] font-bold uppercase tracking-wider text-indigo-600">PathMitra AI</p>
-        <h1 className="text-base font-bold text-slate-900 leading-tight">Namaste{displayName} 👋</h1>
+        <h1 className="text-base font-bold text-slate-900 leading-tight min-h-[1.6em]">
+          <span className="inline-block">{typedGreeting}</span>
+          <span className="inline-block ml-0.5 w-[2px] h-4 align-middle rounded bg-slate-700 animate-pulse" />
+          <span
+            className="inline-block origin-bottom"
+            style={isShaking ? { animation: 'shake 0.9s ease-in-out 1' } : undefined}
+          >
+            👋
+          </span>
+        </h1>
         <p className="text-[11px] text-slate-500 mt-0.5">
           {qualification ? qualification.label : 'Tell me where you are to get matches'}
         </p>
@@ -224,6 +283,16 @@ export function HomeScreen({
       </Card>
 
       <TrustNote />
+      <style jsx>{`
+        @keyframes shake {
+          0%, 100% { transform: rotate(0deg) translateX(0); }
+          15% { transform: rotate(12deg) translateX(1px); }
+          30% { transform: rotate(-10deg) translateX(-1px); }
+          45% { transform: rotate(8deg) translateX(1px); }
+          60% { transform: rotate(-6deg) translateX(-1px); }
+          75% { transform: rotate(4deg) translateX(1px); }
+        }
+      `}</style>
     </div>
   );
 }
