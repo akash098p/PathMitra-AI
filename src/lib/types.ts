@@ -212,6 +212,8 @@ export interface InterestQuestion {
 export interface StudentProfile {
   /** Optional display name — the app never assumes one. */
   name: string;
+  age?: string;
+  gender?: string;
   qualification: QualificationId | '';
   interests: InterestId[];
   budget: BudgetBand;
