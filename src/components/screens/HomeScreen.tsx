@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Award,
   BarChart2,
@@ -47,6 +47,37 @@ export function HomeScreen({
   const qualification = QUALIFICATIONS.find((q) => q.id === profile.qualification);
   const displayName = profile.name ? `, ${profile.name}` : '';
   const interestCount = profile.interests.length;
+  const [activeIndex, setActiveIndex] = useState(0);
+  const touchStartX = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (recommendations.length <= 1) return;
+
+    const timer = window.setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % recommendations.length);
+    }, 4000);
+
+    return () => window.clearInterval(timer);
+  }, [recommendations.length]);
+
+  const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    touchStartX.current = event.touches[0]?.clientX ?? null;
+  };
+
+  const handleTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (touchStartX.current === null) return;
+
+    const endX = event.changedTouches[0]?.clientX ?? touchStartX.current;
+    const deltaX = endX - touchStartX.current;
+
+    if (deltaX < -40) {
+      setActiveIndex((prev) => (prev + 1) % recommendations.length);
+    } else if (deltaX > 40) {
+      setActiveIndex((prev) => (prev - 1 + recommendations.length) % recommendations.length);
+    }
+
+    touchStartX.current = null;
+  };
 
   return (
     <div className="p-4 space-y-4">
@@ -75,31 +106,61 @@ export function HomeScreen({
             Complete the short onboarding so recommendations can be calculated for your stage and interests.
           </p>
         </Card>
-      ) : null}
-      <div className="space-y-2.5">
-        {recommendations.map((rec) => (
-          <Card key={rec.pathway.id} onClick={() => onOpenPathway(rec.pathway.id)} className="space-y-2">
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex gap-2.5 items-start">
-                <span className="text-xl leading-none mt-0.5">{rec.pathway.emoji}</span>
-                <div>
-                  <h3 className="text-xs font-bold text-slate-900">{rec.pathway.shortName}</h3>
-                  <p className="text-[10px] text-slate-500">{rec.pathway.durationLabel}</p>
-                  <div className="flex gap-1 mt-1.5">
-                    <Tag tone="slate">govt fee {rec.pathway.cost.government.replace(' per year', '')}</Tag>
-                  </div>
+      ) : (
+        <div>
+          <div
+            className="overflow-hidden rounded-2xl"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
+            <div
+              className="flex transition-transform duration-500 ease-out"
+              style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+            >
+              {recommendations.map((rec) => (
+                <div key={rec.pathway.id} className="min-w-full pr-1">
+                  <Card onClick={() => onOpenPathway(rec.pathway.id)} className="space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex gap-2.5 items-start">
+                        <span className="text-xl leading-none mt-0.5">{rec.pathway.emoji}</span>
+                        <div>
+                          <h3 className="text-xs font-bold text-slate-900">{rec.pathway.shortName}</h3>
+                          <p className="text-[10px] text-slate-500">{rec.pathway.durationLabel}</p>
+                          <div className="flex gap-1 mt-1.5">
+                            <Tag tone="slate">govt fee {rec.pathway.cost.government.replace(' per year', '')}</Tag>
+                          </div>
+                        </div>
+                      </div>
+                      <ScoreBadge score={rec.score} />
+                    </div>
+                    {rec.reasons[0] ? <Bullet tone="emerald">{rec.reasons[0]}</Bullet> : null}
+                    {rec.cautions[0] ? <Bullet tone="amber">{rec.cautions[0]}</Bullet> : null}
+                    <p className="text-[10px] font-bold text-indigo-600 flex items-center gap-1 pt-0.5">
+                      View full route <ChevronRight className="w-3 h-3" />
+                    </p>
+                  </Card>
                 </div>
-              </div>
-              <ScoreBadge score={rec.score} />
+              ))}
             </div>
-            {rec.reasons[0] ? <Bullet tone="emerald">{rec.reasons[0]}</Bullet> : null}
-            {rec.cautions[0] ? <Bullet tone="amber">{rec.cautions[0]}</Bullet> : null}
-            <p className="text-[10px] font-bold text-indigo-600 flex items-center gap-1 pt-0.5">
-              View full route <ChevronRight className="w-3 h-3" />
-            </p>
-          </Card>
-        ))}
-      </div>
+          </div>
+
+          {recommendations.length > 1 ? (
+            <div className="flex justify-center gap-1.5 mt-3">
+              {recommendations.map((rec, index) => (
+                <button
+                  key={rec.pathway.id}
+                  type="button"
+                  aria-label={`Show ${rec.pathway.shortName}`}
+                  onClick={() => setActiveIndex(index)}
+                  className={`h-1.5 rounded-full transition-all ${
+                    index === activeIndex ? 'w-6 bg-indigo-600' : 'w-2 bg-slate-300'
+                  }`}
+                />
+              ))}
+            </div>
+          ) : null}
+        </div>
+      )}
       
       <SectionTitle>Everything else in the guide</SectionTitle>
       <div className="grid grid-cols-2 gap-2.5">
