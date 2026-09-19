@@ -15,6 +15,8 @@ export const PROFILE_STORAGE_KEY = 'pathmitra.profile.v2';
 
 export const EMPTY_PROFILE: StudentProfile = {
   name: '',
+  age: '',
+  gender: '',
   qualification: '',
   interests: [],
   budget: 'any',
