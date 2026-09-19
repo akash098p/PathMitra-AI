@@ -18,6 +18,7 @@ import { AdvisorScreen } from '@/components/screens/AdvisorScreen';
 import { ProfileScreen } from '@/components/screens/ProfileScreen';
 import { PhoneFrame, ScreenHeader } from '@/components/ui';
 import { EMPTY_PROFILE, loadProfile, saveProfile, toggleMilestone, toggleSavedPathway } from '@/lib/profile';
+import { toggleSavedExam } from '@/lib/profile';
 import type { PathwayId, StudentProfile } from '@/lib/types';
 
 // ============================================================================
@@ -52,6 +53,7 @@ const GUIDE_INDEX = [
 ];
 
 const SUBTITLES: Record<string, { title: string; subtitle?: string }> = {
+  compare: { title: 'Compare routes', subtitle: 'See costs, time and outcomes side by side' },
   exams: { title: 'Entrance exams', subtitle: 'Eligibility, cycles and official portals' },
   careers: { title: 'Jobs: government and private', subtitle: 'Realistic pay bands and growth ladders' },
   states: { title: 'My state guide', subtitle: 'Boards, councils and portals' },
@@ -115,9 +117,18 @@ export default function PathMitraApp() {
         switch (sub) {
           case 'exams':
             return route.param ? (
-              <ExamDetailScreen examId={route.param} onBack={back} />
+              <ExamDetailScreen
+                examId={route.param}
+                profile={profile}
+                onToggleSaved={(id) => update(toggleSavedExam(profile, id))}
+                onBack={back}
+              />
             ) : (
-              <ExamsScreen profile={profile} onOpenExam={(id) => go({ tab: 'guide', sub: 'exams', param: id })} />
+              <ExamsScreen
+                profile={profile}
+                onOpenExam={(id) => go({ tab: 'guide', sub: 'exams', param: id })}
+                onToggleSaved={(id) => update(toggleSavedExam(profile, id))}
+              />
             );
           case 'careers':
             return <CareersScreen profile={profile} onBack={back} />;
@@ -131,6 +142,8 @@ export default function PathMitraApp() {
             return <ScenarioScreen />;
           case 'roadmap':
             return <RoadmapScreen profile={profile} onToggleMilestone={(id) => update(toggleMilestone(profile, id))} />;
+          case 'compare':
+            return <CompareScreen profile={profile} onOpenPathway={(id) => go({ tab: 'explore', param: id })} />;
           default:
             return null;
         }
@@ -167,7 +180,13 @@ export default function PathMitraApp() {
         return (
           <HomeScreen
             profile={profile}
-            onOpenScreen={(screen) => go({ tab: 'guide', sub: screen })}
+            onOpenScreen={(screen) => {
+              if (screen === 'advisor') {
+                go({ tab: 'advisor' });
+                return;
+              }
+              go({ tab: 'guide', sub: screen });
+            }}
             onOpenPathway={(id) => setRoute({ tab: 'explore', param: id })}
             back={back}
           />
