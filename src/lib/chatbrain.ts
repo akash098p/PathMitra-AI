@@ -523,6 +523,24 @@ function lateralEntryAnswer(): LocalAnswer {
   ].join('\n');
   return { reply, source: 'brain-cache:lateral-entry', usedLinks: ['https://www.aicte-india.org'] };
 }
+
+function madhyamikAnswer(): LocalAnswer {
+  return {
+    reply: [
+      '📘 **Madhyamik is West Bengal’s Class 10 secondary examination**',
+      '',
+      bullet('It is conducted by the West Bengal Board of Secondary Education (WBBSE).'),
+      bullet('After passing, you can choose Class 11, a polytechnic diploma, ITI or other vocational routes.'),
+      bullet('For higher secondary, your stream choice is usually Science, Commerce or Arts, depending on your marks and school options.'),
+      '',
+      'Check the current syllabus, registration dates and results on the official board website.',
+      linkBlock([{ label: 'WBBSE official website', url: 'https://wbbse.wb.gov.in' }]),
+    ].join('\n'),
+    source: 'brain-cache:school-exam',
+    usedLinks: ['https://wbbse.wb.gov.in'],
+  };
+}
+
 export function answerLocally(question: string, profile: StudentProfile): LocalAnswer | null {
   const q = question.toLowerCase();
   const queryTokens = tokens(question);
@@ -544,6 +562,10 @@ export function answerLocally(question: string, profile: StudentProfile): LocalA
 
   if (q.includes('scholarship') || q.includes('freeship') || q.includes('fee waiver')) {
     return scholarshipAnswer(profile);
+  }
+
+  if (q.includes('madhyamik') || q.includes('madyamik')) {
+    return madhyamikAnswer();
   }
 
   // 3. Exam match by name and short name. Short-name boost applies only to
