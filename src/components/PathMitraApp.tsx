@@ -159,7 +159,7 @@ export default function PathMitraApp() {
             <div
               key={item.id}
               onClick={() => go({ tab: 'guide', sub: item.id })}
-              className="cursor-pointer bg-white rounded-2xl border border-slate-100 shadow-xs p-4 flex items-center justify-between hover:border-indigo-200 transition"
+              className="cursor-pointer bg-white rounded-2xl border border-slate-200 shadow-xs p-4 flex items-center justify-between hover:border-indigo-400 transition"
             >
               <div className="flex items-center gap-3">
                 <span className="text-xl">{item.emoji}</span>
