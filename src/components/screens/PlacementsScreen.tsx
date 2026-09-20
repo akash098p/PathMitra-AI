@@ -23,18 +23,12 @@ const TYPE_LABEL: Record<string, string> = {
   'job-portal': 'hiring test / portal',
 };
 
-function openToStage(o: Opportunity, qualification: string): boolean {
-  return o.openTo.includes(qualification as Opportunity['openTo'][number]);
-}
-
 export function PlacementsScreen({
   profile,
   onToggleSaved,
-  onBack,
 }: {
   profile: StudentProfile;
   onToggleSaved?: (opportunityId: string) => void;
-  onBack?: () => void;
 }) {
   const guide = findStageGuide(profile.qualification);
   const qualification = QUALIFICATIONS.find((q) => q.id === profile.qualification);
