@@ -26,6 +26,7 @@ export const EMPTY_PROFILE: StudentProfile = {
   completedMilestones: [],
   savedPathways: [],
   savedExams: [],
+  savedOpportunities: [],
   onboarded: false,
 };
 
@@ -133,5 +134,15 @@ export function toggleSavedExam(profile: StudentProfile, examId: string): Studen
   return {
     ...profile,
     savedExams: saved ? profile.savedExams.filter((id) => id !== examId) : [...profile.savedExams, examId],
+  };
+}
+
+export function toggleSavedOpportunity(profile: StudentProfile, opportunityId: string): StudentProfile {
+  const saved = profile.savedOpportunities.includes(opportunityId);
+  return {
+    ...profile,
+    savedOpportunities: saved
+      ? profile.savedOpportunities.filter((id) => id !== opportunityId)
+      : [...profile.savedOpportunities, opportunityId],
   };
 }
