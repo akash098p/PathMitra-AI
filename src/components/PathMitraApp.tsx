@@ -8,6 +8,8 @@ import { ExploreScreen } from '@/components/screens/ExploreScreen';
 import { PathwayDetailScreen } from '@/components/screens/PathwayDetailScreen';
 import { CompareScreen } from '@/components/screens/CompareScreen';
 import { ExamsScreen, ExamDetailScreen } from '@/components/screens/ExamsScreen';
+import { NextStepScreen } from '@/components/screens/NextStepScreen';
+import { PlacementsScreen } from '@/components/screens/PlacementsScreen';
 import { CareersScreen } from '@/components/screens/CareersScreen';
 import { StateScreen } from '@/components/screens/StateScreen';
 import { ScholarshipsScreen } from '@/components/screens/ScholarshipsScreen';
@@ -18,7 +20,7 @@ import { AdvisorScreen } from '@/components/screens/AdvisorScreen';
 import { ProfileScreen } from '@/components/screens/ProfileScreen';
 import { PhoneFrame, ScreenHeader } from '@/components/ui';
 import { EMPTY_PROFILE, loadProfile, saveProfile, toggleMilestone, toggleSavedPathway } from '@/lib/profile';
-import { toggleSavedExam } from '@/lib/profile';
+import { toggleSavedExam, toggleSavedOpportunity } from '@/lib/profile';
 import type { PathwayId, StudentProfile } from '@/lib/types';
 
 // ============================================================================
@@ -43,8 +45,10 @@ const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
 ];
 
 const GUIDE_INDEX = [
+  { id: 'next', label: 'Next best move', hint: 'Ranked opportunities for your stage', emoji: '🚀' },
+  { id: 'placements', label: 'Placements & internships', hint: 'Checklist, hiring tests, drives', emoji: '💼' },
   { id: 'exams', label: 'Entrance exams', hint: 'Eligibility, cycles, official portals', emoji: '📝' },
-  { id: 'careers', label: 'Jobs: govt & private', hint: 'Salary bands and growth ladders', emoji: '💼' },
+  { id: 'careers', label: 'Jobs: govt & private', hint: 'Salary bands and growth ladders', emoji: '🎓' },
   { id: 'states', label: 'My state guide', hint: 'Boards, councils, local portals', emoji: '📍' },
   { id: 'scholarships', label: 'Fees & scholarships', hint: 'NSP, AICTE, state schemes', emoji: '🎓' },
   { id: 'skills', label: 'Skills & apprenticeships', hint: 'Start learning this week', emoji: '🧩' },
@@ -53,6 +57,8 @@ const GUIDE_INDEX = [
 ];
 
 const SUBTITLES: Record<string, { title: string; subtitle?: string }> = {
+  next: { title: 'Next best move', subtitle: 'Ranked opportunities for your exact stage' },
+  placements: { title: 'Placements and internships', subtitle: 'Checklist, hiring tests, drives and portals' },
   compare: { title: 'Compare routes', subtitle: 'See costs, time and outcomes side by side' },
   exams: { title: 'Entrance exams', subtitle: 'Eligibility, cycles and official portals' },
   careers: { title: 'Jobs: government and private', subtitle: 'Realistic pay bands and growth ladders' },
@@ -120,6 +126,22 @@ export default function PathMitraApp() {
 
       if (sub) {
         switch (sub) {
+          case 'next':
+            return (
+              <NextStepScreen
+                profile={profile}
+                onOpenExam={(id) => go({ tab: 'guide', sub: 'exams', param: id })}
+                onBack={back}
+              />
+            );
+          case 'placements':
+            return (
+              <PlacementsScreen
+                profile={profile}
+                onToggleSaved={(id) => update(toggleSavedOpportunity(profile, id))}
+                onBack={back}
+              />
+            );
           case 'exams':
             return route.param ? (
               <ExamDetailScreen
