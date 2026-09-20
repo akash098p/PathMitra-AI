@@ -3,11 +3,12 @@
 import React, { useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { QUALIFICATIONS } from '@/data/qualifications';
-import { INTEREST_QUESTIONS, tallyInterests } from '@/data/interests';
+import { interestQuestionsFor, tallyInterests } from '@/data/interests';
+import { findStageGuide } from '@/data/nextsteps';
 import { BUDGET_LABELS, MOBILITY_LABELS, PRIORITY_LABELS, RISK_LABELS, EMPTY_PROFILE } from '@/lib/profile';
 import { scorePathways } from '@/lib/recommend';
 import type { BudgetBand, InterestId, Mobility, PriorityId, RiskAppetite, StudentProfile } from '@/lib/types';
-import { Bullet, Card, Chip, PrimaryButton, ScoreBadge, SectionTitle, TrustNote } from '@/components/ui';
+import { Bullet, Card, Chip, PrimaryButton, ScoreBadge, SectionTitle, Tag, TrustNote } from '@/components/ui';
 
 // ============================================================================
 // Onboarding — the student is never assumed.
@@ -38,9 +39,16 @@ export function Onboarding({
   const [profile, setProfile] = useState<StudentProfile>({ ...EMPTY_PROFILE, ...initial });
   const [answers, setAnswers] = useState<Record<string, number>>({});
 
-  const patch = (part: Partial<StudentProfile>) => setProfile((prev) => ({ ...prev, ...part }));
+  const patch = (part: Partial<StudentProfile>) => {
+    // The quiz is written per stage, so changing the stage invalidates the
+    // answers given for the previous question set.
+    if (part.qualification && part.qualification !== profile.qualification) setAnswers({});
+    setProfile((prev) => ({ ...prev, ...part }));
+  };
 
   const qualificationMeta = QUALIFICATIONS.find((q) => q.id === profile.qualification);
+  const quizQuestions = useMemo(() => interestQuestionsFor(profile.qualification), [profile.qualification]);
+  const stageGuide = useMemo(() => findStageGuide(profile.qualification), [profile.qualification]);
   const previewRecommendations = useMemo(
     () => (profile.interests.length > 0 ? scorePathways(profile, 3) : []),
     [profile],
@@ -49,7 +57,7 @@ export function Onboarding({
   const canContinue = step === 1 ? Boolean(profile.qualification) : true;
 
   function finishInterestStep() {
-    const interests = tallyInterests(answers) as InterestId[];
+    const interests = tallyInterests(answers, quizQuestions) as InterestId[];
     patch({ interests });
     setStep(3);
   }
@@ -151,13 +159,18 @@ export function Onboarding({
         {step === 2 && (
           <>
             <div>
-              <h2 className="text-sm font-bold text-slate-900">What you enjoy</h2>
+              <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+                <Tag tone="indigo">{qualificationMeta?.label ?? 'Your stage'}</Tag>
+                <Tag tone="emerald">{quizQuestions.length} questions</Tag>
+              </div>
+              <h2 className="text-sm font-bold text-slate-900">What you enjoy — asked for your stage</h2>
               <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
-                Pick the closest answer for each question. These answers shape every recommendation you see.
+                These questions are written for {qualificationMeta?.label ?? 'your stage'}, so they ask about work you can
+                actually judge today. Your answers drive every match, score and roadmap step you see next.
               </p>
             </div>
             <div className="space-y-4">
-              {INTEREST_QUESTIONS.map((question) => (
+              {quizQuestions.map((question) => (
                 <div key={question.id} className="space-y-2">
                   <h3 className="text-xs font-bold text-slate-900 leading-relaxed">{question.prompt}</h3>
                   <div className="space-y-2">
@@ -272,6 +285,27 @@ export function Onboarding({
                 ))}
               </Card>
             ))}
+            {stageGuide ? (
+              <>
+                <SectionTitle hint="also in the Guide tab">Your first moves at this stage</SectionTitle>
+                {stageGuide.nextBest.slice(0, 2).map((card) => (
+                  <Card key={card.id} className="space-y-1.5">
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="text-xs font-bold text-slate-900 leading-snug">{card.title}</h3>
+                      <Tag tone="sky">{card.category}</Tag>
+                    </div>
+                    <p className="text-[10px] text-slate-600 leading-relaxed">{card.why}</p>
+                    <p className="text-[10px] font-semibold text-slate-700">⏱ {card.timeline}</p>
+                  </Card>
+                ))}
+                <Card className="bg-emerald-50/70 border-emerald-100">
+                  <p className="text-[10px] text-emerald-900 leading-relaxed">
+                    The Roadmap tab turns these into a tickable checklist with {stageGuide.nextBest.length} moves, your
+                    placement checklist and the exams to track — saved on this device.
+                  </p>
+                </Card>
+              </>
+            ) : null}
             <Card className="bg-indigo-50/70 border-indigo-100">
               <p className="text-[10px] text-indigo-900 leading-relaxed flex gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
@@ -302,7 +336,7 @@ export function Onboarding({
           {step === 2 && (
             <PrimaryButton
               onClick={() => finishInterestStep()}
-              disabled={INTEREST_QUESTIONS.some((question) => answers[question.id] === undefined)}
+              disabled={quizQuestions.some((question) => answers[question.id] === undefined)}
             >
               Continue to family constraints
             </PrimaryButton>
@@ -326,7 +360,7 @@ export function Onboarding({
         ) : null}
         {step === 2 ? (
           <p className="text-[10px] text-slate-400 text-center">
-            Answer honestly — these interests drive every recommendation in the app.
+            Answer honestly — these answers drive the matches, scores and roadmap for your stage.
           </p>
         ) : null}
       </div>
