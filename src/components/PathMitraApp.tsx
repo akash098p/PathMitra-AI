@@ -112,15 +112,10 @@ export default function PathMitraApp() {
     setRoute(prev);
   }
 
-  function resetStack() {
-    setBackStack([]);
-  }
-
   function renderScreen() {
     if (!hydrated) return null;
     if (route.tab === 'guide') {
       const sub = route.sub;
-      const meta = sub ? (SUBTITLES[sub] ?? { title: 'Guide' }) : { title: 'Guide' };
       const back = () => {
         const current = backStack[backStack.length - 1];
         setBackStack((stack) => stack.slice(0, -1));
@@ -146,7 +141,6 @@ export default function PathMitraApp() {
               <PlacementsScreen
                 profile={profile}
                 onToggleSaved={(id) => update(toggleSavedOpportunity(profile, id))}
-                onBack={back}
               />
             );
           case 'exams':
@@ -155,7 +149,6 @@ export default function PathMitraApp() {
                 examId={route.param}
                 profile={profile}
                 onToggleSaved={(id) => update(toggleSavedExam(profile, id))}
-                onBack={back}
               />
             ) : (
               <ExamsScreen
@@ -165,7 +158,7 @@ export default function PathMitraApp() {
               />
             );
           case 'careers':
-            return <CareersScreen profile={profile} onBack={back} />;
+            return <CareersScreen profile={profile} />;
           case 'states':
             return <StateScreen profile={profile} />;
           case 'scholarships':
@@ -230,15 +223,6 @@ export default function PathMitraApp() {
           <PathwayDetailScreen
             pathwayId={route.param}
             profile={profile}
-            onBack={() => {
-              const current = backStack[backStack.length - 1];
-              setBackStack((stack) => stack.slice(0, -1));
-              if (!current) {
-                setRoute({ tab: 'home' });
-                return;
-              }
-              setRoute(current);
-            }}
             onOpenExam={(id) => go({ tab: 'guide', sub: 'exams', param: id })}
           />
         ) : (
@@ -246,7 +230,6 @@ export default function PathMitraApp() {
             profile={profile}
             onOpenPathway={(id) => go({ tab: 'explore', param: id })}
             onToggleSaved={(id) => update(toggleSavedPathway(profile, id as PathwayId))}
-            onBack={back}
           />
         );
       case 'advisor':
