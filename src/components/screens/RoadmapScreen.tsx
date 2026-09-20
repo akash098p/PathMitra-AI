@@ -15,7 +15,7 @@ import {
   skillTracksForStage,
 } from '@/lib/stagematch';
 import type { NextStepCategory, QualificationId, StudentProfile } from '@/lib/types';
-import { Card, EmptyState, Meter, SectionTitle, Tag } from '@/components/ui';
+import { Card, EmptyState, Meter, Tag } from '@/components/ui';
 
 // ============================================================================
 // Roadmap — a personal checklist derived from the student's own stage and
