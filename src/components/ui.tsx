@@ -118,7 +118,7 @@ export function Chip({
   return (
     <button
       onClick={onClick}
-      className={`px-2.5 py-1 rounded-full text-[10px] font-semibold whitespace-nowrap border transition ${
+      className={`max-w-full px-2.5 py-1 rounded-full text-left text-[10px] font-semibold whitespace-normal break-words border transition ${
         active
           ? 'bg-indigo-600 text-white border-indigo-600'
           : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-200'
