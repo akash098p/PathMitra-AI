@@ -134,7 +134,7 @@ export function Tag({
   tone = 'slate',
 }: {
   children: React.ReactNode;
-  tone?: 'slate' | 'indigo' | 'emerald' | 'amber' | 'rose';
+  tone?: 'slate' | 'indigo' | 'emerald' | 'amber' | 'rose' | 'sky' | 'violet';
 }) {
   const tones: Record<string, string> = {
     slate: 'bg-slate-100 text-slate-600',
@@ -142,6 +142,8 @@ export function Tag({
     emerald: 'bg-emerald-50 text-emerald-700',
     amber: 'bg-amber-50 text-amber-800',
     rose: 'bg-rose-50 text-rose-700',
+    sky: 'bg-sky-50 text-sky-700',
+    violet: 'bg-violet-50 text-violet-700',
   };
   return (
     <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wide ${tones[tone]}`}>

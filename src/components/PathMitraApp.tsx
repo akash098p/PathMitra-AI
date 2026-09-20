@@ -77,8 +77,15 @@ export default function PathMitraApp() {
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setProfile(loadProfile());
-    setHydrated(true);
+    // Hydration gate: localStorage only exists after mount, so the first render
+    // uses the blank profile. The load is deferred one tick — React's lint rule
+    // forbids synchronous setState inside effects (cascading renders), and a
+    // deferred apply is visually identical here.
+    const id = window.setTimeout(() => {
+      setProfile(loadProfile());
+      setHydrated(true);
+    }, 0);
+    return () => window.clearTimeout(id);
   }, []);
 
   useEffect(() => {

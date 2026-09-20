@@ -106,14 +106,22 @@ export function HomeScreen({
   }, [displayGreeting]);
 
   useEffect(() => {
-    setActiveIndex((prev) => (recommendations.length ? prev % recommendations.length : 0));
-    if (recommendations.length <= 1) return;
+    // Clamp the card index when the recommendation list changes size. Deferred
+    // one tick so the effect body has no synchronous setState (React's
+    // cascading-render lint rule); visually identical.
+    const clamp = window.setTimeout(() => {
+      setActiveIndex((prev) => (recommendations.length ? prev % recommendations.length : 0));
+    }, 0);
+    if (recommendations.length <= 1) return () => window.clearTimeout(clamp);
 
     const timer = window.setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % recommendations.length);
     }, 4000);
 
-    return () => window.clearInterval(timer);
+    return () => {
+      window.clearTimeout(clamp);
+      window.clearInterval(timer);
+    };
   }, [recommendations.length]);
 
   const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
