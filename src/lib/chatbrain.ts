@@ -5,6 +5,12 @@ import { SCHOLARSHIPS } from '@/data/scholarships';
 import { SKILL_TRACKS } from '@/data/skills';
 import { OPPORTUNITIES, opportunitiesFor } from '@/data/opportunities';
 import { findStageGuide, placementChecklistFor } from '@/data/nextsteps';
+import {
+  careersForStage,
+  isCareerCloseMatch,
+  isScholarshipCloseMatch,
+  scholarshipsForStage,
+} from '@/lib/stagematch';
 import { STATES } from '@/data/states';
 import { QUALIFICATIONS } from '@/data/qualifications';
 import { SCENARIOS, findScenario, formatINR, paybackNote, studyYearsBeforeIncome } from '@/lib/roi';
@@ -125,10 +131,9 @@ function careerAnswer(id: string): LocalAnswer | null {
 }
 
 function scholarshipAnswer(profile: StudentProfile): LocalAnswer {
-  const eligible = SCHOLARSHIPS.filter(
-    (s) => !profile.qualification || s.appliesToQualification.includes(profile.qualification),
-  );
-  const list = (eligible.length > 0 ? eligible : SCHOLARSHIPS).slice(0, 4);
+  const ordered = scholarshipsForStage(profile.qualification);
+  const eligible = ordered.filter((s) => isScholarshipCloseMatch(s, profile.qualification));
+  const list = (eligible.length > 0 ? eligible : ordered).slice(0, 4);
   const reply = [
     '🎓 **Scholarships and fee support worth checking**',
     '',
@@ -852,10 +857,10 @@ function govtJobAnswer(q: string, profile: StudentProfile): LocalAnswer | null {
   if (!/(job|jobs|naukri|career|service|post|vacancy|recruit|salary|pay|line|option|scope|banna|ban sakta)/.test(q)) return null;
 
   const stage = profile.qualification as QualificationId | '';
-  const govtJobs = CAREERS.filter((c) => c.sector === 'govt' || c.sector === 'both');
-  const forStage = stage
-    ? govtJobs.filter((c) => c.entryPathways.some((p) => PATHWAYS.find((x) => x.id === p)?.startsAfter.includes(stage)))
-    : [];
+  const govtJobs = careersForStage(profile.qualification).filter(
+    (c) => c.sector === 'govt' || c.sector === 'both',
+  );
+  const forStage = stage ? govtJobs.filter((c) => isCareerCloseMatch(c, profile.qualification)) : [];
   const picks = (forStage.length >= 2 ? forStage : govtJobs).slice(0, 4);
 
   const lines = [
