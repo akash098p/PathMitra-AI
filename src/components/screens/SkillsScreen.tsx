@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { skillTracksForInterests } from '@/data/skills';
-import { OPPORTUNITIES, opportunitiesFor } from '@/data/opportunities';
+import { opportunitiesForStage, skillTracksForStage } from '@/lib/stagematch';
 import { INTERESTS } from '@/data/qualifications';
 import type { StudentProfile } from '@/lib/types';
 import { Bullet, Card, EmptyState, LinkList, SectionTitle, Tag } from '@/components/ui';
@@ -31,9 +30,9 @@ export function SkillsScreen({
   profile: StudentProfile;
   onBack?: () => void;
 }) {
-  const tracks = skillTracksForInterests(profile.interests);
+  const tracks = skillTracksForStage(profile.interests, profile.qualification);
   const visible = tracks;
-  const opportunities = profile.qualification ? opportunitiesFor(profile.qualification) : OPPORTUNITIES;
+  const opportunities = opportunitiesForStage(profile.qualification);
 
   return (
     <div className="p-4 space-y-4">
@@ -47,9 +46,14 @@ export function SkillsScreen({
 
       {profile.interests.length > 0 ? (
         <p className="text-[10px] text-slate-400 leading-relaxed">
-          Ordered by your interests: {profile.interests.slice(0, 3).map((i) => INTERESTS[i]?.label ?? i).join(', ')}.
+          Ranked by your interests: {profile.interests.slice(0, 3).map((i) => INTERESTS[i]?.label ?? i).join(', ')} — then
+          by what pays off at your stage.
         </p>
-      ) : null}
+      ) : (
+        <p className="text-[10px] text-slate-400 leading-relaxed">
+          Ranked for your stage. Add interests in Profile to reorder these around what you enjoy.
+        </p>
+      )}
 
       {visible.length === 0 ? (
         <EmptyState title="Pick a track" body="Add interests in your profile to order these tracks for you." />
