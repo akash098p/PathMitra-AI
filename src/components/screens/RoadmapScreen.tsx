@@ -50,7 +50,9 @@ function buildPlan(profile: StudentProfile): RoadmapPlan | null {
 
   const firstIncome = profile.qualification === 'btech-student'
     ? 'During the final year through internships, placements, freelance work or graduate engineer roles'
-    : profile.qualification === 'b-ed-student'
+    : profile.qualification === 'graduate' || profile.qualification === 'postgraduate'
+      ? 'Immediately — through off-campus applications, hiring tests, converting internships and government exam cycles'
+      : profile.qualification === 'b-ed-student'
       ? 'After teaching practice through TET/CTET, school recruitment, tutoring or education roles'
       : primary.durationYears <= 3
         ? `Around age ${profile.qualification === 'class10' ? 18 : 20}–21 through entry jobs, apprenticeships or internships`
