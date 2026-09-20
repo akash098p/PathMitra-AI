@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Heart } from 'lucide-react';
 import { EXAMS, findExam } from '@/data/exams';
 import { QUALIFICATIONS } from '@/data/qualifications';
+import { examsForStage, isExamCloseMatch } from '@/lib/stagematch';
 import type { StudentProfile } from '@/lib/types';
 import { Bullet, Card, Chip, EmptyState, KeyValue, LinkList, Meter, SectionTitle, Tag, VerificationNote } from '@/components/ui';
 
@@ -97,44 +98,20 @@ export function ExamsScreen({
   const [filter, setFilter] = useState<'all' | 'national' | 'state' | 'mine'>('all');
 
   const qualificationMeta = QUALIFICATIONS.find((q) => q.id === profile.qualification);
-  const visible = EXAMS.filter((exam) => {
-    if (filter === 'national') return exam.level === 'national';
-    if (filter === 'state') return exam.level === 'state';
-    if (filter === 'mine') {
-      if (!profile.qualification) return true;
-      if (exam.openTo.includes(profile.qualification)) return true;
-      // Class 11 students prepare for the same entrance landscape as Class 12.
-      if (profile.qualification === 'class11') {
-        return (
-          exam.openTo.includes('class12-science') ||
-          exam.openTo.includes('class12-commerce') ||
-          exam.openTo.includes('class12-arts')
-        );
-      }
-      if (profile.qualification === 'btech-student') {
-        return exam.id === 'nats' || exam.category.includes('Engineering') || exam.category.includes('University') || exam.category.includes('Postgraduate');
-      }
-      if (profile.qualification === 'b-ed-student') {
-        return exam.id === 'ncet' || exam.category.includes('Teacher education');
-      }
-      if (profile.qualification === 'medical-student') {
-        return exam.category.includes('Medical') || exam.category.includes('Healthcare');
-      }
-      if (profile.qualification === 'graduate' || profile.qualification === 'postgraduate') {
-        return (
-          exam.category.includes('Postgraduate') ||
-          exam.category.includes('Government Jobs') ||
-          exam.category.includes('Management') ||
-          exam.category.includes('Teaching') ||
-          exam.category.includes('Healthcare') ||
-          exam.category.includes('Computer Applications') ||
-          exam.category.includes('Apprenticeship')
-        );
-      }
-      return false;
-    }
-    return true;
-  }).sort((a, b) => a.shortName.localeCompare(b.shortName));
+  // Stage-aware: "Open to me" is the level-appropriate list, closest first. It is
+  // never empty because same-level exams are included before falling back.
+  const mine = examsForStage(profile.qualification).filter((exam) =>
+    isExamCloseMatch(exam, profile.qualification),
+  );
+  const visible = (
+    filter === 'mine'
+      ? mine
+      : EXAMS.filter((exam) => {
+          if (filter === 'national') return exam.level === 'national';
+          if (filter === 'state') return exam.level === 'state';
+          return true;
+        })
+  ).sort((a, b) => a.shortName.localeCompare(b.shortName));
 
   return (
     <div className="p-4 space-y-4">
@@ -157,7 +134,7 @@ export function ExamsScreen({
           State
         </Chip>
         <Chip active={filter === 'mine'} onClick={() => setFilter('mine')}>
-          Open to me{qualificationMeta ? ` — ${qualificationMeta.label}` : ''}
+          Open to me ({mine.length}){qualificationMeta ? ` — ${qualificationMeta.label}` : ''}
         </Chip>
       </div>
 
