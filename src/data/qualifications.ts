@@ -13,6 +13,13 @@ export const QUALIFICATIONS: Qualification[] = [
     canChoose: ['science-pcm', 'science-pcb', 'commerce-ip', 'arts-humanities', 'polytechnic', 'iti', 'vocational'],
   },
   {
+    id: 'class11',
+    label: 'Class 11 (studying)',
+    emoji: '📗',
+    helper: 'Early planner — building the stream strategy and entrance base for after Class 12.',
+    canChoose: ['science-pcm', 'science-pcb', 'commerce-ip', 'arts-humanities', 'polytechnic', 'iti', 'vocational'],
+  },
+  {
     id: 'class12-science',
     label: 'Class 12 — Science (PCM / PCB)',
     emoji: '🧪',
@@ -50,9 +57,16 @@ export const QUALIFICATIONS: Qualification[] = [
   {
     id: 'btech-student',
     label: 'Currently studying B.Tech / B.E.',
-    emoji: '⚙️',
+    emoji: '💻',
     helper: 'Need help with departments, projects, internships, placements, GATE or engineering jobs.',
     canChoose: ['engineering', 'm-sc', 'phd', 'general-degree'],
+  },
+  {
+    id: 'medical-student',
+    label: 'Medical / healthcare student (MBBS, B.Sc Nursing, paramedical)',
+    emoji: '🩺',
+    helper: 'Planning PG entrance, government service, or clinical and allied careers.',
+    canChoose: ['nursing', 'paramedical', 'm-sc', 'phd', 'general-degree', 'b-ed'],
   },
   {
     id: 'b-ed-student',
@@ -67,6 +81,20 @@ export const QUALIFICATIONS: Qualification[] = [
     emoji: '🎓',
     helper: 'Wanting internships, skills, postgraduate study, and government exam guidance.',
     canChoose: ['bca', 'engineering', 'general-degree', 'b-ed', 'm-sc', 'phd', 'science-pcm'],
+  },
+  {
+    id: 'graduate',
+    label: 'Degree completed (BA / B.Sc / B.Com / BCA / B.Tech)',
+    emoji: '🎓',
+    helper: 'Ready for jobs, placements, internships, government exams or postgraduate study.',
+    canChoose: ['m-sc', 'phd', 'b-ed', 'general-degree', 'vocational'],
+  },
+  {
+    id: 'postgraduate',
+    label: 'Postgraduate (Masters completed / pursuing)',
+    emoji: '🎓',
+    helper: 'Aiming at research, NET/SET teaching, specialist roles or a second skill.',
+    canChoose: ['phd', 'b-ed', 'general-degree'],
   },
 ];
 
