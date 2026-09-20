@@ -15,10 +15,8 @@ import { Bullet, Card, Chip, EmptyState, LinkList, SectionTitle, Tag, Verificati
 
 export function StateScreen({
   profile,
-  onBack,
 }: {
   profile: StudentProfile;
-  onBack?: () => void;
 }) {
   const [selectedCode, setSelectedCode] = useState<string>(() => profile.name && STATES[0] ? STATES[0].code : STATES[0]?.code ?? '');
   const state = findState(selectedCode) ?? STATES[0];
