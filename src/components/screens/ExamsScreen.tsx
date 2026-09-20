@@ -103,11 +103,33 @@ export function ExamsScreen({
     if (filter === 'mine') {
       if (!profile.qualification) return true;
       if (exam.openTo.includes(profile.qualification)) return true;
+      // Class 11 students prepare for the same entrance landscape as Class 12.
+      if (profile.qualification === 'class11') {
+        return (
+          exam.openTo.includes('class12-science') ||
+          exam.openTo.includes('class12-commerce') ||
+          exam.openTo.includes('class12-arts')
+        );
+      }
       if (profile.qualification === 'btech-student') {
-        return exam.id === 'nats' || exam.category.includes('Engineering') || exam.category.includes('University');
+        return exam.id === 'nats' || exam.category.includes('Engineering') || exam.category.includes('University') || exam.category.includes('Postgraduate');
       }
       if (profile.qualification === 'b-ed-student') {
         return exam.id === 'ncet' || exam.category.includes('Teacher education');
+      }
+      if (profile.qualification === 'medical-student') {
+        return exam.category.includes('Medical') || exam.category.includes('Healthcare');
+      }
+      if (profile.qualification === 'graduate' || profile.qualification === 'postgraduate') {
+        return (
+          exam.category.includes('Postgraduate') ||
+          exam.category.includes('Government Jobs') ||
+          exam.category.includes('Management') ||
+          exam.category.includes('Teaching') ||
+          exam.category.includes('Healthcare') ||
+          exam.category.includes('Computer Applications') ||
+          exam.category.includes('Apprenticeship')
+        );
       }
       return false;
     }
