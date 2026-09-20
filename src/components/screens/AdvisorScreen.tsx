@@ -22,14 +22,20 @@ interface ChatMessage {
 // Every prompt below is answered from the bundled datasets, so tapping a chip
 // never spends an AI call. Keep it that way when adding new ones.
 const QUICK_PROMPTS = [
+  'What is the next best career move for me?',
+  'How do I get placed or find an internship?',
   'What can I do after Class 10?',
+  'What can I do after Class 12 Science?',
+  'What can I do after a diploma or ITI?',
+  'What can I do after my degree?',
+  'What should a medical student plan after MBBS?',
   'Compare Science PCM with a polytechnic diploma on fees and time to first salary',
-  'What government jobs can I aim for after Class 10?',
+  'What government jobs can I aim for after Class 12?',
   'How much will a diploma cost and which scholarships cover it?',
   'Which scholarships can my family actually apply for?',
   'What should I do next?',
-  'Which stream should I choose after Class 10?',
-  'I am confused about what to do after 12th',
+  'How do I prepare for campus placements?',
+  'Which apprenticeships can I join right now?',
   'How long does it take to start earning after a diploma?',
   'What skills should I start learning right now?',
   'How do I prepare for JEXPO and what does it open?',
