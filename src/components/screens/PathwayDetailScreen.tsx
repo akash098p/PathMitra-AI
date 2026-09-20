@@ -18,12 +18,10 @@ export function PathwayDetailScreen({
   pathwayId,
   profile,
   onOpenExam,
-  onBack,
 }: {
   pathwayId: string;
   profile: StudentProfile;
   onOpenExam: (examId: string) => void;
-  onBack: () => void;
 }) {
   const pathway = findPathway(pathwayId);
   if (!pathway) {
