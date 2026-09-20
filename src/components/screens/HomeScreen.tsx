@@ -5,10 +5,12 @@ import {
   Award,
   BarChart2,
   Bot,
+  Briefcase,
   ChevronRight,
   ChevronLeft,
   Landmark,
   Map as MapIcon,
+  Rocket,
   Scale,
   Wallet,
   GraduationCap,
@@ -25,12 +27,14 @@ import { Bullet, Card, ScoreBadge, SectionTitle, Tag, TrustNote } from '@/compon
 // ============================================================================
 
 const QUICK_ACTIONS = [
+  { id: 'next', label: 'Next best move', hint: 'Ranked for your stage', icon: <Rocket className="w-4 h-4" />, tone: 'bg-sky-50 text-sky-600' },
+  { id: 'placements', label: 'Placements & internships', hint: 'Tests, drives, apprenticeships', icon: <Briefcase className="w-4 h-4" />, tone: 'bg-emerald-50 text-emerald-600' },
   { id: 'exams', label: 'Entrance exams', hint: 'JEE, NEET, JEXPO, NDA', icon: <Award className="w-4 h-4" />, tone: 'bg-amber-50 text-amber-600' },
-  { id: 'careers', label: 'Govt vs private jobs', hint: 'Roles, salary, stability', icon: <Landmark className="w-4 h-4" />, tone: 'bg-emerald-50 text-emerald-600' },
-  { id: 'scenarios', label: 'What-if simulator', hint: 'Compare full timelines', icon: <BarChart2 className="w-4 h-4" />, tone: 'bg-sky-50 text-sky-600' },
-  { id: 'scholarships', label: 'Fees & scholarships', hint: 'NSP, AICTE, state schemes', icon: <Wallet className="w-4 h-4" />, tone: 'bg-rose-50 text-rose-600' },
-  { id: 'skills', label: 'Skill tracks', hint: 'Start learning now', icon: <GraduationCap className="w-4 h-4" />, tone: 'bg-indigo-50 text-indigo-600' },
-  { id: 'roadmap', label: 'My roadmap', hint: 'Step-by-step checklist', icon: <MapIcon className="w-4 h-4" />, tone: 'bg-violet-50 text-violet-600' },
+  { id: 'careers', label: 'Govt vs private jobs', hint: 'Roles, salary, stability', icon: <Landmark className="w-4 h-4" />, tone: 'bg-rose-50 text-rose-600' },
+  { id: 'scenarios', label: 'What-if simulator', hint: 'Compare full timelines', icon: <BarChart2 className="w-4 h-4" />, tone: 'bg-indigo-50 text-indigo-600' },
+  { id: 'scholarships', label: 'Fees & scholarships', hint: 'NSP, AICTE, state schemes', icon: <Wallet className="w-4 h-4" />, tone: 'bg-violet-50 text-violet-600' },
+  { id: 'skills', label: 'Skill tracks', hint: 'Start learning now', icon: <GraduationCap className="w-4 h-4" />, tone: 'bg-teal-50 text-teal-600' },
+  { id: 'roadmap', label: 'My roadmap', hint: 'Step-by-step checklist', icon: <MapIcon className="w-4 h-4" />, tone: 'bg-orange-50 text-orange-600' },
 ];
 
 export function HomeScreen({
