@@ -5,7 +5,16 @@ import { ArrowDown, CheckCircle2, Circle, Flag, Route, Wallet } from 'lucide-rea
 import { PATHWAYS } from '@/data/pathways';
 import { SKILL_TRACKS } from '@/data/skills';
 import { SCHOLARSHIPS } from '@/data/scholarships';
-import type { QualificationId, StudentProfile } from '@/lib/types';
+import { findExam } from '@/data/exams';
+import { findStageGuide } from '@/data/nextsteps';
+import { QUALIFICATIONS } from '@/data/qualifications';
+import {
+  isScholarshipCloseMatch,
+  pathwaysForStage,
+  scholarshipsForStage,
+  skillTracksForStage,
+} from '@/lib/stagematch';
+import type { NextStepCategory, QualificationId, StudentProfile } from '@/lib/types';
 import { Card, EmptyState, Meter, SectionTitle, Tag } from '@/components/ui';
 
 // ============================================================================
@@ -31,93 +40,149 @@ interface RoadmapPlan {
   alternatives: string[];
 }
 
+/** Realistic first-income timing, stage by stage. */
+function firstIncomeFor(profile: StudentProfile): string {
+  const stage = profile.qualification as QualificationId;
+  if (stage === 'btech-student') {
+    return 'During the final year through internships, placements, freelance work or graduate engineer roles';
+  }
+  if (stage === 'graduate' || stage === 'postgraduate') {
+    return 'Immediately — through off-campus applications, hiring tests, converting internships and government exam cycles';
+  }
+  if (stage === 'medical-student') {
+    return 'From the internship year onward — government medical posts, hospital roles or stipend-supported PG training';
+  }
+  if (stage === 'b-ed-student') {
+    return 'After teaching practice through TET/CTET, school recruitment, tutoring or education roles';
+  }
+  if (stage === 'diploma') {
+    return 'Within months of finishing — JE exams, apprenticeship stipends or technician jobs';
+  }
+  if (stage === 'iti') {
+    return 'Right after the trade — apprenticeship stipend, technician recruitment or workshop work';
+  }
+  if (stage === 'undergraduate') {
+    return 'In the final year through internships, off-campus tests and entry-level roles';
+  }
+  return stage === 'class10' || stage === 'class11'
+    ? 'Around age 18–21 through entry jobs, apprenticeships or a short professional course'
+    : 'Around age 21–23 after the first degree or professional qualification';
+}
+
+/** Timeline phases, mapped from the type of next move. */
+const PHASE_BY_CATEGORY: Record<NextStepCategory, string> = {
+  job: 'Apply',
+  placement: 'Placements',
+  internship: 'Experience',
+  exam: 'Prepare',
+  'higher-study': 'Study',
+  skill: 'Build',
+};
+
 function buildPlan(profile: StudentProfile): RoadmapPlan | null {
   if (!profile.qualification) return null;
 
-  const eligible = PATHWAYS.filter((p) => p.startsAfter.includes(profile.qualification as QualificationId));
-  const ranked = [...eligible].sort((a, b) => {
-    const aScore = a.fits.filter((interest) => profile.interests.includes(interest)).length;
-    const bScore = b.fits.filter((interest) => profile.interests.includes(interest)).length;
-    return bScore - aScore;
-  });
-  const saved = profile.savedPathways.filter((id) => eligible.some((p) => p.id === id));
-  const ordered = [
-    ...saved.map((id) => eligible.find((p) => p.id === id)).filter((p): p is (typeof PATHWAYS)[number] => Boolean(p)),
-    ...ranked.filter((p) => !saved.includes(p.id)),
-  ];
-  const primary = ordered[0];
-  if (!primary) return null;
+  const guide = findStageGuide(profile.qualification);
+  const qualification = QUALIFICATIONS.find((q) => q.id === profile.qualification);
+  if (!guide) return null;
 
-  const firstIncome = profile.qualification === 'btech-student'
-    ? 'During the final year through internships, placements, freelance work or graduate engineer roles'
-    : profile.qualification === 'graduate' || profile.qualification === 'postgraduate'
-      ? 'Immediately — through off-campus applications, hiring tests, converting internships and government exam cycles'
-      : profile.qualification === 'b-ed-student'
-      ? 'After teaching practice through TET/CTET, school recruitment, tutoring or education roles'
-      : primary.durationYears <= 3
-        ? `Around age ${profile.qualification === 'class10' ? 18 : 20}–21 through entry jobs, apprenticeships or internships`
-        : `Usually around age ${profile.qualification === 'class10' ? 22 : 24} after the first degree or professional qualification`;
-  const examText = primary.entranceExams.length
-    ? `Check ${primary.entranceExams.slice(0, 2).map((id) => id.toUpperCase()).join(' and ')} dates on the official portals and make a second-choice college list.`
-    : 'Shortlist nearby government and private institutes, then verify recognition, placement records and total fees.';
+  // Course routes only exist for stages that are still choosing a course. For an
+  // already-qualified student the plan is built from their stage playbook, which
+  // is why a medical, degree or postgraduate student now gets a real roadmap.
+  const stagePathways = pathwaysForStage(profile.qualification);
+  const chosenRoute = stagePathways.find((p) => profile.savedPathways.includes(p.id)) ?? stagePathways[0];
+  const tracks = skillTracksForStage(profile.interests, profile.qualification);
+  const funding = scholarshipsForStage(profile.qualification).filter((s) =>
+    isScholarshipCloseMatch(s, profile.qualification),
+  );
+  const trackedExams = guide.govtExams
+    .map((id) => findExam(id))
+    .filter((e): e is NonNullable<typeof e> => Boolean(e));
+
+  const firstIncome = firstIncomeFor(profile);
+  const examText = chosenRoute && chosenRoute.entranceExams.length
+    ? `Track ${chosenRoute.entranceExams.slice(0, 2).map((id) => id.toUpperCase()).join(' and ')} dates plus the exams listed for your stage.`
+    : trackedExams.length
+      ? `Track ${trackedExams.slice(0, 2).map((e) => e.shortName).join(' and ')} — verify current dates on the official portals.`
+      : 'Shortlist nearby government and private institutes, then verify recognition, placement records and total fees.';
 
   const stages: Milestone[] = [
     {
       id: 'confirm-stage',
       phase: 'Now',
       timing: 'This week',
-      label: 'Confirm your starting point',
-      detail: `Check that ${profile.qualification === 'class10' ? 'Class 10' : 'your current qualification'} and your subjects match the route. Speak with one teacher or counsellor before committing.`,
-      outcome: 'A realistic entry point',
+      label: `Confirm your stage: ${qualification?.label ?? 'set it in Profile'}`,
+      detail: 'Every match, exam and move on this page depends on this being accurate. Update it in Profile if anything changed.',
+      outcome: 'A roadmap that matches reality',
     },
+    ...guide.nextBest.map((card) => ({
+      id: `move-${card.id}`,
+      phase: PHASE_BY_CATEGORY[card.category] ?? 'Move',
+      timing: card.timeline,
+      label: card.title,
+      detail: `${card.why} Start with: ${card.actions[0]}`,
+      outcome: card.actions[card.actions.length - 1],
+    })),
+    ...(trackedExams.length > 0
+      ? [
+          {
+            id: 'exam-watch',
+            phase: 'Prepare',
+            timing: trackedExams[0].cycleWindow,
+            label: `Track ${trackedExams.slice(0, 2).map((e) => e.shortName).join(' and ')}`,
+            detail: 'File the application the day the window opens and keep every document scanned in one folder.',
+            outcome: 'Applications filed on time',
+          },
+        ]
+      : []),
+    ...(funding.length > 0
+      ? [
+          {
+            id: 'funding',
+            phase: 'Fund',
+            timing: funding[0].window,
+            label: `Apply for ${funding[0].name}`,
+            detail: `${funding[0].benefits} Keep ready: ${funding[0].documents.slice(0, 3).join(', ')}.`,
+            outcome: 'Fees covered where eligible',
+          },
+        ]
+      : []),
+    ...(chosenRoute
+      ? [
+          {
+            id: `route-${chosenRoute.id}`,
+            phase: 'Study',
+            timing: 'Before applications open',
+            label: `Lock your route: ${chosenRoute.shortName}`,
+            detail: `${chosenRoute.durationLabel} · Government cost ${chosenRoute.cost.government} · ${examText}`,
+            outcome: 'A first choice and a fallback',
+          },
+        ]
+      : []),
     {
-      id: `choose-${primary.id}`,
-      phase: 'Choose',
-      timing: 'Next 2–4 weeks',
-      label: `Shortlist ${primary.shortName}`,
-      detail: `${primary.bestFor} Compare the government and private versions, travel distance, hostel needs and the full cost rather than tuition alone.`,
-      outcome: 'One primary route and one fallback',
-    },
-    {
-      id: `prepare-${primary.id}`,
-      phase: 'Prepare',
-      timing: profile.qualification === 'class10' ? 'Next 3–6 months' : profile.qualification === 'btech-student' || profile.qualification === 'b-ed-student' ? 'This semester' : 'Before applications open',
-      label: 'Prepare for admission',
-      detail: `${examText} Keep marksheets, certificates, photographs and income or category documents ready in one folder.`,
-      outcome: 'Applications submitted on time',
-    },
-    {
-      id: `build-${primary.id}`,
+      id: `skill-${tracks[0].id}`,
       phase: 'Build',
-      timing: `During ${primary.durationLabel.toLowerCase()}`,
-      label: 'Build proof of skill alongside study',
-      detail: `Complete practical work from the syllabus, one small project each term and a short internship or apprenticeship when possible.`,
-      outcome: 'Portfolio, references and confidence',
+      timing: tracks[0].weeklyHours,
+      label: `Start the ${tracks[0].name} track`,
+      detail: `Milestone one: ${tracks[0].milestones[0]} First project: ${tracks[0].beginnerProjects[0]}`,
+      outcome: 'A portfolio piece with a public link',
     },
     {
-      id: `earn-${primary.id}`,
-      phase: 'Launch',
-      timing: 'Final year and after',
-      label: 'Test the job market before graduating',
-      detail: `Apply to entry roles related to ${primary.shortName}, compare real offers and keep higher study or a government exam as an informed backup.`,
-      outcome: firstIncome,
-    },
-    {
-      id: 'review-route',
+      id: 'review-progress',
       phase: 'Review',
-      timing: 'Every 6 months',
-      label: 'Review the route with evidence',
-      detail: 'Check marks, skill progress, family budget and actual job demand. Change direction early if the evidence changes, without treating it as failure.',
-      outcome: 'A route that stays realistic',
+      timing: 'Every 4 weeks',
+      label: 'Review progress with evidence',
+      detail: 'Check marks, skill progress, real job demand and the family budget. Changing direction early is planning, not failure.',
+      outcome: 'A plan that stays honest',
     },
   ];
 
   return {
-    title: `${primary.shortName} career journey`,
-    summary: `A practical route from ${profile.qualification === 'class10' ? 'your current Class 10 stage' : 'your current stage'} to study, first work experience and a sustainable career.`,
+    title: `${qualification?.label ?? 'Your'} plan`,
+    summary: guide.headline,
     firstIncome,
     stages,
-    alternatives: ordered.slice(1, 3).map((p) => p.shortName),
+    alternatives: guide.nextBest.slice(1, 3).map((c) => c.title),
   };
 }
 
