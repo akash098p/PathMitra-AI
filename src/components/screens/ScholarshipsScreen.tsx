@@ -13,10 +13,8 @@ import { Bullet, Card, Chip, KeyValue, LinkList, SectionTitle, Tag } from '@/com
 
 export function ScholarshipsScreen({
   profile,
-  onBack,
 }: {
   profile: StudentProfile;
-  onBack?: () => void;
 }) {
   const [scope, setScope] = useState<'all' | 'central' | 'state' | 'institute'>('all');
 
@@ -57,7 +55,7 @@ export function ScholarshipsScreen({
         <Card className="bg-emerald-50/70 border-emerald-100">
           <p className="text-[10px] text-emerald-900 leading-relaxed">
             {matchCount} schemes look open to {qualificationMeta?.label} — they appear first below. The rest are shown
-            with a "check eligibility" note, because income limits and course rules decide eligibility, not the stage.
+            with a &quot;check eligibility&quot; note, because income limits and course rules decide eligibility, not the stage.
           </p>
         </Card>
       ) : null}
