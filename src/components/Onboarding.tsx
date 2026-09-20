@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
+import Image from 'next/image';
 import { QUALIFICATIONS } from '@/data/qualifications';
 import { interestQuestionsFor, tallyInterests } from '@/data/interests';
 import { findStageGuide } from '@/data/nextsteps';
@@ -88,9 +89,11 @@ export function Onboarding({
                 <span aria-hidden="true" className="absolute -left-12 bottom-5 h-24 w-52 -rotate-6 rounded-[45%] bg-[#d8f5df]" />
                 <span aria-hidden="true" className="absolute bottom-[-2rem] right-8 h-24 w-36 rotate-[-18deg] rounded-full border-[10px] border-[#ffd98a]" />
                 <span aria-hidden="true" className="absolute left-10 top-8 h-5 w-5 rounded-full bg-[#ffb4c8]" />
-                <img
+                <Image
                   src="/welcome.png"
                   alt="Student exploring education and career paths"
+                  width={390}
+                  height={290}
                   className="relative z-10 h-full w-full object-contain"
                 />
               </div>
