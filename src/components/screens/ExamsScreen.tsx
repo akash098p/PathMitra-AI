@@ -17,12 +17,10 @@ export function ExamDetailScreen({
   examId,
   profile,
   onToggleSaved,
-  onBack,
 }: {
   examId: string;
   profile: StudentProfile;
   onToggleSaved: (examId: string) => void;
-  onBack: () => void;
 }) {
   const exam = findExam(examId);
   if (!exam) {
