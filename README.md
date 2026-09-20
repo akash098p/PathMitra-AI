@@ -8,11 +8,14 @@ The product is designed around one principle: explain trade-offs clearly instead
 ## What It Includes
 
 - Personalised onboarding for stage, interests, budget, mobility, risk appetite, and family priorities
+- Stages for every student: Class 10 and 11, Class 12 (Science / Commerce / Arts), diploma, ITI, B.Tech, medical and healthcare, B.Ed, undergraduate, graduate, and postgraduate
+- Stage-wise **Next best move** playbooks — ranked jobs, placements, internships, exams, higher study and skills per qualification, with honest pitfalls
+- **Placements & internships hub** — readiness checklist, hiring tests (TCS NQT, eLitmus, AMCAT), drives, PM Internship Scheme, NATS/NAPS apprenticeships and stage-matched internship listings
 - Route recommendations across academic, diploma, ITI, skills, and employment pathways
 - Explore views with pathway details, costs, duration, eligibility, outcomes, strengths, and trade-offs
 - Entrance exam, career, state guide, scholarship, skills, scenario, and roadmap screens
 - Side-by-side route comparison
-- Saved pathways, saved exams, and roadmap progress stored locally in the browser
+- Saved pathways, saved exams, saved internships, and roadmap progress stored locally in the browser
 - AI advisor with profile-aware answers, conversation history, and quick prompts
 - Local, dataset-backed answers for common questions before an external AI provider is used
 - Responsive phone-style interface with a light visual theme and desktop presentation frame
@@ -47,7 +50,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-The app works without AI API keys. The advisor answers first from the bundled datasets — greetings and quick messages, fees and total cost, government jobs and pay bands, duration and first-salary age, stage-wise options after Class 10 and 12, stream choice, ITI trades, defence routes, scholarships (amounts, documents and application windows), setbacks such as failed exams or a gap year, skill tracks and step-by-step roadmaps. Questions that genuinely need live or external facts are sent to a configured AI provider, and if none is configured the app says so instead of guessing.
+The app works without AI API keys. The advisor answers first from the bundled datasets — greetings and quick messages, fees and total cost, government jobs and pay bands, duration and first-salary age, stage-wise options after Class 10, 11, 12, diploma, ITI, engineering, medical, degree and postgraduation, stream choice, ITI trades, defence routes, scholarships (amounts, documents and application windows), setbacks such as failed exams or a gap year, next-best-career playbooks, placements and internships, skill tracks and step-by-step roadmaps. Questions that genuinely need live or external facts are sent to a configured AI provider, and if none is configured the app says so instead of guessing.
 
 ## Environment Variables
 
