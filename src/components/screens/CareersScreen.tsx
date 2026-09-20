@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { CAREERS } from '@/data/careers';
 import { QUALIFICATIONS } from '@/data/qualifications';
+import { careersForStage, isCareerCloseMatch } from '@/lib/stagematch';
 import type { StudentProfile } from '@/lib/types';
 import { Bullet, Card, Chip, KeyValue, Meter, SectionTitle, Tag } from '@/components/ui';
 
@@ -27,17 +28,19 @@ export function CareersScreen({
 }) {
   const [sector, setSector] = useState<'all' | 'govt' | 'private'>('all');
 
-  const allowedPathways = profile.qualification
-    ? QUALIFICATIONS.find((q) => q.id === profile.qualification)?.canChoose ?? []
-    : [];
+  // Stage-aware ordering: roles open from this qualification come first, then
+  // the rest of the market by demand — never an empty screen for any stage.
+  const ordered = careersForStage(profile.qualification);
+  const qualificationLabel =
+    QUALIFICATIONS.find((q) => q.id === profile.qualification)?.label ?? 'your stage';
+  const closeCount = profile.qualification
+    ? ordered.filter((c) => isCareerCloseMatch(c, profile.qualification)).length
+    : ordered.length;
 
-  const visible = CAREERS.filter((c) => {
+  const visible = ordered.filter((c) => {
     if (sector === 'all') return true;
     if (sector === 'govt') return c.sector === 'govt' || c.sector === 'both';
     return c.sector === 'private' || c.sector === 'both';
-  }).filter((c) => {
-    if (!profile.qualification || allowedPathways.length === 0) return true;
-    return c.entryPathways.some((pathway) => allowedPathways.includes(pathway));
   });
 
   const govtCount = CAREERS.filter((c) => c.sector === 'govt' || c.sector === 'both').length;
@@ -50,6 +53,9 @@ export function CareersScreen({
         <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
           {CAREERS.length} roles across government and private India — with starting pay, experienced pay and an
           honest stability note. {govtCount} government-linked, {privateCount} private-linked.
+          {profile.qualification
+            ? ` The ${closeCount} marked "open to your stage" are your closest matches and appear first.`
+            : ''}
         </p>
       </div>
 
@@ -77,9 +83,14 @@ export function CareersScreen({
                   <p className="text-[10px] text-slate-500">{career.minimumQualification}</p>
                 </div>
               </div>
-              <Tag tone={career.sector === 'govt' ? 'emerald' : career.sector === 'private' ? 'indigo' : 'slate'}>
-                {career.sector}
-              </Tag>
+              <div className="flex flex-col items-end gap-1 shrink-0">
+                <Tag tone={career.sector === 'govt' ? 'emerald' : career.sector === 'private' ? 'indigo' : 'slate'}>
+                  {career.sector}
+                </Tag>
+                {isCareerCloseMatch(career, profile.qualification) ? (
+                  <Tag tone="sky">open to your stage</Tag>
+                ) : null}
+              </div>
             </div>
 
             <KeyValue label="Starting" value={career.startingBand} />
@@ -130,7 +141,8 @@ export function CareersScreen({
 
       {profile.qualification ? (
         <p className="text-[10px] text-slate-400 text-center leading-relaxed">
-          Roles are filtered roughly to your stage ({profile.qualification}). Use the filters above to see everything.
+          Ordered for {qualificationLabel}. The hiring tests, drives and government exams for this stage are on the
+          Placements &amp; internships screen.
         </p>
       ) : null}
     </div>
