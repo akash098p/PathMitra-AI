@@ -141,6 +141,7 @@ export default function PathMitraApp() {
               <PlacementsScreen
                 profile={profile}
                 onToggleSaved={(id) => update(toggleSavedOpportunity(profile, id))}
+                onBack={back}
               />
             );
           case 'exams':

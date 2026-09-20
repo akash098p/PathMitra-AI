@@ -26,9 +26,11 @@ const TYPE_LABEL: Record<string, string> = {
 export function PlacementsScreen({
   profile,
   onToggleSaved,
+  onBack,
 }: {
   profile: StudentProfile;
   onToggleSaved?: (opportunityId: string) => void;
+  onBack?: () => void;
 }) {
   const guide = findStageGuide(profile.qualification);
   const qualification = QUALIFICATIONS.find((q) => q.id === profile.qualification);
