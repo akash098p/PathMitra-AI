@@ -16,6 +16,8 @@ import { Bullet, Card, EmptyState, LinkList, SectionTitle, Tag } from '@/compone
 const TYPE_LABEL: Record<string, string> = {
   apprenticeship: 'apprenticeship',
   internship: 'internship',
+  'placement-drive': 'placement drive',
+  'job-portal': 'hiring test',
   competition: 'competition',
   olympiad: 'olympiad',
   'scholarship-test': 'scholarship test',
