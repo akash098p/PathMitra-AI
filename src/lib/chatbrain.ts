@@ -3,7 +3,8 @@ import { PATHWAYS } from '@/data/pathways';
 import { CAREERS } from '@/data/careers';
 import { SCHOLARSHIPS } from '@/data/scholarships';
 import { SKILL_TRACKS } from '@/data/skills';
-import { OPPORTUNITIES } from '@/data/opportunities';
+import { OPPORTUNITIES, opportunitiesFor } from '@/data/opportunities';
+import { findStageGuide, placementChecklistFor } from '@/data/nextsteps';
 import { STATES } from '@/data/states';
 import { QUALIFICATIONS } from '@/data/qualifications';
 import { SCENARIOS, findScenario, formatINR, paybackNote, studyYearsBeforeIncome } from '@/lib/roi';
@@ -201,7 +202,9 @@ function smallTalkAnswer(q: string, profile: StudentProfile): LocalAnswer | null
         '',
         bullet('Ask me to compare two routes — for example "diploma vs B.Tech in computer science"'),
         bullet('Ask about any exam, scholarship, government or private job, or skill to learn'),
-        bullet('Open the Explore tab for streams, the Guide tab for exams, fees, jobs and scholarships'),
+        bullet('Ask "what is the next best career move for me?" — ranked for your stage'),
+        bullet('Ask "how do I get placed or find an internship?" — checklist, tests and portals'),
+        bullet('Open the Explore tab for routes, the Guide tab for everything else'),
         '',
         'Try: "Which is better, a diploma or B.Tech in computer science?"',
       ].join('\n'),
@@ -221,9 +224,10 @@ function smallTalkAnswer(q: string, profile: StudentProfile): LocalAnswer | null
         '🤖 **Here is what I can do for you:**',
         '',
         bullet('**Compare routes** — "PCM vs diploma", "ITI vs polytechnic", with fees and time to first salary'),
-        bullet('**Explain exams** — JEE, NEET, CUET, JEXPO, JELET, NDA and 25+ more, with official portals'),
+        bullet('**Explain exams** — JEE, NEET, CUET, GATE, CAT, SSC CGL and 30+ more, with official portals'),
         bullet('**Find money** — scholarships and fee waivers your family can actually apply for'),
         bullet('**Show jobs** — government and private careers with real starting pay bands'),
+        bullet('**Get you placed** — readiness checklists, hiring tests, internships and apprenticeships for your stage'),
         bullet('**Plan skills** — what to learn this month, with a first project to build'),
         '',
         'Ask me anything — for example "Can I do B.Tech without JEE?"',
@@ -315,7 +319,7 @@ function smallTalkAnswer(q: string, profile: StudentProfile): LocalAnswer | null
   if (/are you (a )?(real|human|person|bot|robot|ai)|who (made|built|created) you|are you chatgpt|which (ai|model) are you|are you free/.test(q)) {
     return {
       reply: [
-        '🤖 **I am PathMitra — the guidance assistant inside this app, built for students after Class 10 and 12.**',
+        '🤖 **I am PathMitra — the guidance assistant inside this app, built for students from Class 10 through Class 12, diploma, ITI, medical, engineering, degree and postgraduation.**',
         '',
         bullet('I answer first from this app\'s own datasets: pathways, exams, careers, scholarships, skills and state-wise rules'),
         bullet('If a question goes beyond that data, an external model is used only as a helper — the numbers and portals you see still come from the datasets'),
@@ -641,14 +645,18 @@ function examVsExam(aId: string, bId: string): LocalAnswer | null {
 
 const QUALIFICATION_LABELS: Record<QualificationId, string> = {
   class10: 'Class 10',
+  class11: 'Class 11',
   'class12-science': 'Class 12 Science',
   'class12-commerce': 'Class 12 Commerce',
   'class12-arts': 'Class 12 Arts',
   diploma: 'a polytechnic diploma',
   iti: 'an ITI trade certificate',
   'btech-student': 'a B.Tech / B.E. course',
+  'medical-student': 'a medical or healthcare course (MBBS, nursing, paramedical)',
   'b-ed-student': 'a B.Ed course',
-  undergraduate: 'an undergraduate degree',
+  undergraduate: 'an undergraduate degree course',
+  graduate: 'a completed degree',
+  postgraduate: 'a postgraduate degree',
 };
 
 const COST_INTENT =
@@ -717,11 +725,15 @@ function rankForInterests(pathways: ReturnType<typeof stageOptionsOf>, profile: 
 /** Explicit "after X" phrases, so we only switch stage when the student says so. */
 const STAGE_PHRASES: Array<{ id: QualificationId; test: RegExp }> = [
   { id: 'class10', test: /(after|post|passed|complete(d)?|finish(ed)?|ke baad|k baad)\s*(my\s*)?(class\s*10|10th|ten|madhyamik|matric|high school)/ },
+  { id: 'class11', test: /(after|post|passed|complete(d)?|finish(ed)?|ke baad|k baad)\s*(my\s*)?(class\s*11|11th|eleventh)\b/ },
   { id: 'class12-science', test: /(after|post|passed|complete(d)?|finish(ed)?|ke baad|k baad)\s*(my\s*)?(class\s*12|12th|twelfth|intermediate|higher secondary|hsc)/ },
   { id: 'btech-student', test: /(after|post|completed?)\s*(my\s*)?(b\.?\s?tech|b\.?e\b|engineering)/ },
+  { id: 'medical-student', test: /(after|post|complet(ed|ing)?)\s*(my\s*)?(mbbs|bams|bhms|bds|b\.?sc\s*nursing|nursing|paramedical)\b/ },
   { id: 'diploma', test: /(after|post|completed?)\s*((my|a|the)\s*)*(diploma|polytechnic)/ },
   { id: 'iti', test: /(after|post|completed?)\s*((my|an?|the)\s*)*(iti|trade certificate)/ },
-  { id: 'undergraduate', test: /(after|post|completed?)\s*((my|a|the)\s*)*(graduation|graduating|degree|b\.?com|b\.?sc|bca|b\.?a)\b/ },
+  { id: 'postgraduate', test: /(after|post|completed?)\s*(my\s*)?(masters?|m\.?tech|m\.?sc|m\.?com|m\.?a\b|post\s?graduation|pg)\b/ },
+  { id: 'graduate', test: /(after|post|completed?)\s*((my|a|the)\s*)*(graduation|graduating|degree|b\.?com|b\.?sc|bca|b\.?a)\b/ },
+  { id: 'undergraduate', test: /(doing|in|pursuing|studying)\s*(my\s*)?(bca|b\.?sc|b\.?com|b\.?a)\b/ },
 ];
 
 /** The pathway a student is finishing when they ask "what after X". */
@@ -729,6 +741,8 @@ const STAGE_PATHWAY: Partial<Record<QualificationId, string>> = {
   diploma: 'polytechnic',
   iti: 'iti',
   'btech-student': 'engineering',
+  graduate: 'general-degree',
+  postgraduate: 'm-sc',
 };
 
 function detectStagePhrase(q: string, profile: StudentProfile): QualificationId | undefined {
@@ -1506,6 +1520,100 @@ function madhyamikAnswer(): LocalAnswer {
   };
 }
 
+/** "What is the next best career/opportunity for me?" — from the stage playbooks. */
+function nextBestAnswer(q: string, profile: StudentProfile): LocalAnswer | null {
+  const wants =
+    /(next best|best career|career opportunit|career option|which career|top career|career for|konsa career|career path|job opportunit|best move for me|best option for me|best course for me)/.test(
+      q,
+    );
+  if (!wants) return null;
+
+  const guide = findStageGuide(profile.qualification);
+  if (!guide) {
+    return {
+      reply: [
+        '🚀 **Tell me your stage and I will rank the next best moves for exactly that stage**',
+        '',
+        bullet('"I am in Class 12 Science" — entrances, degrees, nursing and defence routes'),
+        bullet('"I finished my diploma / ITI" — apprenticeships, JE exams, lateral entry'),
+        bullet('"I completed my degree" — placements, internships, SSC CGL and banking'),
+        bullet('"I am an MBBS / nursing student" — PG entrance and government service routes'),
+        '',
+        'Or set your stage once in the Profile tab and every answer becomes specific.',
+      ].join('\n'),
+      source: 'brain-cache:next-best',
+      usedLinks: [],
+    };
+  }
+
+  const picks = guide.nextBest.slice(0, 4);
+  const reply = [
+    `🚀 **${guide.headline}**`,
+    '',
+    guide.summary,
+    '',
+    `**Your next best moves, in order (${QUALIFICATION_LABELS[profile.qualification as QualificationId] ?? 'your stage'})**`,
+    ...picks.flatMap((card) => [
+      bullet(`**${card.title}** (${card.category}) — ${card.why}`),
+      ...card.actions.slice(0, 2).map((a) => `  - ${a}`),
+    ]),
+    '',
+    '**Watch out**',
+    bullet(guide.pitfalls[0]),
+    '',
+    'The **Next best move** tab in the Guide shows the full ranked playbook with portals, and the **Placements & internships** tab has the readiness checklist and hiring tests.',
+    linkBlock(picks.flatMap((c) => c.links)),
+  ].join('\n');
+  return {
+    reply,
+    source: 'brain-cache:next-best',
+    usedLinks: picks.flatMap((c) => c.links.map((l) => l.url)),
+  };
+}
+
+/** "How do I get placed / find internships?" — the placements hub in chat form. */
+function placementAnswer(q: string, profile: StudentProfile): LocalAnswer | null {
+  const wants =
+    /(placement|placements|get placed|placed in|campus (drive|placement|interview)|off.?campus|hiring (test|drive)|nqt|elitmus|amcat|job (ready|hunt)|get (a )?job|job search|how to apply for jobs)/.test(
+      q,
+    );
+  if (!wants) return null;
+
+  const checklist = placementChecklistFor(profile.qualification);
+  const pool = profile.qualification ? opportunitiesFor(profile.qualification) : OPPORTUNITIES;
+  const tests = pool.filter((o) => o.type === 'placement-drive' || o.type === 'job-portal').slice(0, 3);
+  const internships = pool.filter((o) => o.type === 'internship' || o.type === 'apprenticeship').slice(0, 2);
+
+  const lines = [
+    '💼 **How students actually get placed — checklist first, luck later**',
+    '',
+    '**Your readiness checklist, in order**',
+    ...checklist.slice(0, 5).map((c, i) => bullet(`${i + 1}. ${c}`)),
+    '',
+  ];
+
+  if (tests.length > 0) {
+    lines.push('**Standardised hiring tests and drives open to you**');
+    lines.push(...tests.map((o) => bullet(`**${o.name}** — ${o.eligibility}`)));
+    lines.push('');
+  }
+  if (internships.length > 0) {
+    lines.push('**Internships and apprenticeships that convert**');
+    lines.push(...internships.map((o) => bullet(`**${o.name}** — ${o.stipend}`)));
+    lines.push('');
+  }
+
+  lines.push(
+    'Volume plus proof: 5 relevant applications a week, one public project link, one practice-test score. That system outperforms any placement cell.',
+    linkBlock([...tests, ...internships].map((o) => o.portal)),
+  );
+  return {
+    reply: lines.filter(Boolean).join('\n'),
+    source: 'brain-cache:placements',
+    usedLinks: [...tests, ...internships].map((o) => o.portal.url),
+  };
+}
+
 // ----------------------------------------------------------------------------
 // Intent router for the extended knowledge, plus short follow-up handling.
 // Order matters: the most specific chains are tried before the general ones so
@@ -1538,6 +1646,8 @@ function checkExtendedIntents(q: string, profile: StudentProfile): LocalAnswer |
     salaryAnswer(q, profile) ??
     govtJobAnswer(q, profile) ??
     setbackAnswer(q, profile) ??
+    nextBestAnswer(q, profile) ??
+    placementAnswer(q, profile) ??
     streamChoiceAnswer(q, profile) ??
     stageOptionsAnswer(q, profile) ??
     roadmapAnswer(q, profile) ??
@@ -1709,13 +1819,17 @@ export function answerLocally(question: string, profile: StudentProfile): LocalA
   }
 
   if (q.includes('apprentice') || q.includes('internship') || q.includes('stipend')) {
-    const items = OPPORTUNITIES.filter((o) => o.type === 'apprenticeship' || o.type === 'internship').slice(0, 4);
+    const pool = profile.qualification ? opportunitiesFor(profile.qualification) : OPPORTUNITIES;
+    const items = pool
+      .filter((o) => o.type === 'apprenticeship' || o.type === 'internship' || o.type === 'placement-drive')
+      .slice(0, 4);
     const reply = [
-      '🧰 **Paid training routes: apprenticeships and internships**',
+      '🧰 **Paid training routes: internships, apprenticeships and hiring tests**',
       '',
       ...items.map((o) => bullet(`**${o.name}** — ${o.eligibility}. ${o.stipend}`)),
       '',
       profileSummary(profile) ? `Your profile so far: ${profileSummary(profile)}` : '',
+      'The Placements & internships tab in the Guide has the full list with the readiness checklist.',
       linkBlock(items.map((o) => o.portal)),
     ].filter(Boolean).join('\n');
     return { reply, source: 'brain-cache:opportunities', usedLinks: items.map((o) => o.portal.url) };
