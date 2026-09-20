@@ -21,10 +21,8 @@ const DEMAND_TONE: Record<string, 'emerald' | 'indigo' | 'amber' | 'rose'> = {
 
 export function CareersScreen({
   profile,
-  onBack,
 }: {
   profile: StudentProfile;
-  onBack?: () => void;
 }) {
   const [sector, setSector] = useState<'all' | 'govt' | 'private'>('all');
 
