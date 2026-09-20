@@ -189,3 +189,7 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ## 📄 License
 
+PathMitra AI is provided for educational and personal guidance purposes. The bundled datasets (exam dates, fees, eligibility, scholarship rules, pay bands) are compiled from publicly available government and institutional sources and are **not** an official admissions or employment authority — always verify on the linked official portals.
+
+This project is marked `private` in `package.json`. External AI provider responses are subject to the terms of the selected provider (Gemini / OpenRouter). See each provider's documentation for details.
+
