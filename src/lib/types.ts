@@ -6,14 +6,18 @@
 
 export type QualificationId =
   | 'class10'
+  | 'class11'
   | 'class12-science'
   | 'class12-commerce'
   | 'class12-arts'
   | 'diploma'
   | 'iti'
   | 'btech-student'
+  | 'medical-student'
   | 'b-ed-student'
-  | 'undergraduate';
+  | 'undergraduate'
+  | 'graduate'
+  | 'postgraduate';
 
 export type InterestId =
   | 'coding'
@@ -197,6 +201,8 @@ export interface Opportunity {
   type:
     | 'apprenticeship'
     | 'internship'
+    | 'placement-drive'
+    | 'job-portal'
     | 'competition'
     | 'olympiad'
     | 'scholarship-test'
@@ -207,6 +213,44 @@ export interface Opportunity {
   portal: Link;
   openTo: QualificationId[];
   notes: string;
+}
+
+// ----------------------------------------------------------------------------
+// Stage-wise "next best move" content — the backbone of the Next Step and
+// Placements screens for Class 12, diploma, ITI, medical, degree and
+// postgraduate students.
+// ----------------------------------------------------------------------------
+
+export type NextStepCategory = 'job' | 'placement' | 'internship' | 'exam' | 'higher-study' | 'skill';
+
+export interface NextStepCard {
+  id: string;
+  title: string;
+  category: NextStepCategory;
+  /** Why this is among the best moves at this stage — one honest sentence. */
+  why: string;
+  /** When to act, in concrete terms. */
+  timeline: string;
+  /** 3–5 ordered, concrete actions. */
+  actions: string[];
+  tags: string[];
+  links: Link[];
+}
+
+export interface StageGuide {
+  id: QualificationId;
+  headline: string;
+  summary: string;
+  /** Short themes the student should keep in mind at this stage. */
+  focus: string[];
+  /** Ranked opportunities — index 0 is the strongest default move. */
+  nextBest: NextStepCard[];
+  /** Job-readiness checklist for stages entering the job market. */
+  placementChecklist?: string[];
+  /** Exam ids from src/data/exams.ts worth acting on from this stage. */
+  govtExams: string[];
+  /** Honest warnings — what goes wrong most often at this stage. */
+  pitfalls: string[];
 }
 
 export interface InterestQuestion {
@@ -235,6 +279,8 @@ export interface StudentProfile {
   completedMilestones: string[];
   savedPathways: PathwayId[];
   savedExams: string[];
+  /** Saved internships, drives and programmes from the placements screen. */
+  savedOpportunities: string[];
   onboarded: boolean;
 }
 
