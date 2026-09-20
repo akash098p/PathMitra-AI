@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "PathMitra AI — Your Guide from Education to Career",
   description:
-    "PathMitra AI is a free, honest guide for Indian students and parents: streams after Class 10, polytechnic, ITI, entrance exams across states, government and private job paths, scholarships, and personalised AI advice.",
+    "PathMitra AI is a free, honest guide for every Indian student and parent: streams after Class 10 and 12, polytechnic, ITI, medical, engineering and degree routes, placements and internships, entrance exams across states, government and private job paths, scholarships, and personalised AI advice.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
