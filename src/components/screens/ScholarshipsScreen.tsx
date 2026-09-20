@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { SCHOLARSHIPS, scholarshipsForQualification } from '@/data/scholarships';
+import { isScholarshipCloseMatch, scholarshipsForStage } from '@/lib/stagematch';
 import { QUALIFICATIONS } from '@/data/qualifications';
 import type { StudentProfile } from '@/lib/types';
 import { Bullet, Card, Chip, KeyValue, LinkList, SectionTitle, Tag } from '@/components/ui';
@@ -20,16 +20,11 @@ export function ScholarshipsScreen({
 }) {
   const [scope, setScope] = useState<'all' | 'central' | 'state' | 'institute'>('all');
 
-  const matched = profile.qualification ? scholarshipsForQualification(profile.qualification) : SCHOLARSHIPS;
-  const visible = SCHOLARSHIPS.filter((s) => {
-    if (scope === 'all') return true;
-    return s.level === scope;
-  });
-  const ordered = [...visible].sort((a, b) => {
-    const aMatched = matched.some((m) => m.id === a.id) ? 0 : 1;
-    const bMatched = matched.some((m) => m.id === b.id) ? 0 : 1;
-    return aMatched - bMatched;
-  });
+  const orderedAll = scholarshipsForStage(profile.qualification);
+  const visible = orderedAll.filter((s) => (scope === 'all' ? true : s.level === scope));
+  const matchCount = profile.qualification
+    ? orderedAll.filter((s) => isScholarshipCloseMatch(s, profile.qualification)).length
+    : orderedAll.length;
 
   const qualificationMeta = QUALIFICATIONS.find((q) => q.id === profile.qualification);
 
@@ -61,14 +56,15 @@ export function ScholarshipsScreen({
       {profile.qualification ? (
         <Card className="bg-emerald-50/70 border-emerald-100">
           <p className="text-[10px] text-emerald-900 leading-relaxed">
-            Sorted for {qualificationMeta?.label}. Schemes open to your stage appear first.
+            {matchCount} schemes look open to {qualificationMeta?.label} — they appear first below. The rest are shown
+            with a "check eligibility" note, because income limits and course rules decide eligibility, not the stage.
           </p>
         </Card>
       ) : null}
 
       <div className="space-y-2.5">
-        {ordered.map((s) => {
-          const isMatched = matched.some((m) => m.id === s.id);
+        {visible.map((s) => {
+          const isMatched = isScholarshipCloseMatch(s, profile.qualification);
           return (
             <Card key={s.id} className="space-y-2">
               <div className="flex items-start justify-between gap-2">
