@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { opportunitiesForStage, skillTracksForStage } from '@/lib/stagematch';
 import { INTERESTS } from '@/data/qualifications';
 import type { StudentProfile } from '@/lib/types';
@@ -25,10 +25,8 @@ const TYPE_LABEL: Record<string, string> = {
 
 export function SkillsScreen({
   profile,
-  onBack,
 }: {
   profile: StudentProfile;
-  onBack?: () => void;
 }) {
   const tracks = skillTracksForStage(profile.interests, profile.qualification);
   const visible = tracks;
