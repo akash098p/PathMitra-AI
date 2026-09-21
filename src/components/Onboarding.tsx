@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import { QUALIFICATIONS } from '@/data/qualifications';
@@ -38,6 +38,11 @@ export function Onboarding({
   const [step, setStep] = useState(0);
   const [profile, setProfile] = useState<StudentProfile>({ ...EMPTY_PROFILE, ...initial });
   const [answers, setAnswers] = useState<Record<string, number>>({});
+  const stepContentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    stepContentRef.current?.scrollTo({ top: 0, behavior: 'auto' });
+  }, [step]);
 
   const patch = (part: Partial<StudentProfile>) => {
     // The quiz is written per stage, so changing the stage invalidates the
@@ -79,7 +84,7 @@ export function Onboarding({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-4">
+      <div ref={stepContentRef} className="flex-1 overflow-y-auto px-4 pb-4 space-y-4">
         {step === 0 && (
           <>
             <div className="text-center pt-4">
