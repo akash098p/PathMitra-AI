@@ -185,15 +185,9 @@ export function ExamsScreen({
                   const similar = (searchResult?.similar && searchResult.exams.length > 0)
                     ? searchResult.exams.slice(0, 4).map((e) => e.shortName)
                     : [];
-                  const similarLine = similar.length > 0
-                    ? `\n\nClosest exams already in this app’s dataset: ${similar.join(', ')}.`
-                    : '';
-                  const question = [
-                    `Tell me about the entrance exam “${q}” — who conducts it, the syllabus, eligibility, what it unlocks, the usual cycle window, difficulty, preparation time and the official portal.`,
-                    `If “${q}” is not a separate exam, tell me the real route to it and the existing exams I should prepare for instead, and name similar exams I can look up here.`,
-                    `Keep it concise and professional.`,
-                    similarLine,
-                  ].filter(Boolean).join('\n');
+                  const question = similar.length > 0
+                    ? `${q} — conducted by, syllabus, eligibility, unlocks, cycle window, difficulty, prep time, portal?\nIf not a separate exam: real route + similar exams.\nClosest in this app: ${similar.join(', ')}.`
+                    : `${q} — conducted by, syllabus, eligibility, unlocks, cycle window, difficulty, prep time, portal?\nIf not a separate exam: real route + similar exams.`;
                   openAdvisorWithQuery(question);
                 }}
                 className="w-full px-3 py-2 text-[11px] font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl border border-indigo-600 transition"
