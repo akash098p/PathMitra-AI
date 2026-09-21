@@ -16,7 +16,6 @@ import { Bullet, Card, Chip, PrimaryButton, ScoreBadge, SectionTitle, Tag, Trust
 // Step 1: who you are. Step 2: what you enjoy. Step 3: family constraints.
 // Step 4: what PathMitra recommends and why.
 // ============================================================================
-
 const PRIORITY_IDS: PriorityId[] = [
   'low-fees',
   'quick-earning',
@@ -103,7 +102,7 @@ export function Onboarding({
                 your education to career guide
               </h1>
               <p className="text-[11px] text-slate-600 mt-2 leading-relaxed px-2">
-                I do not have a ready-made answer for you. First I will ask five short questions about your stage,
+                I do not have a ready-made answer for you. First I will ask six short questions about your stage,
                 what you enjoy, and what your family can manage — then I will show the routes that actually fit,
                 with their real strengths and risks.
               </p>
