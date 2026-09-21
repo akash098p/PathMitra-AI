@@ -260,7 +260,7 @@ const MEDICAL_QUESTIONS: InterestQuestion[] = [
   },
   {
     id: 'med-after',
-    prompt: 'What is your honest plan after the degree and internship?',
+    prompt: 'What is your true plan after the degree and training?',
     options: [
       { label: 'PG entrance — MD/MS in a clinical branch', interests: ['medicine', 'research'], emoji: '🎯' },
       { label: 'Government service — CMS, state medical officer', interests: ['govt-service', 'medicine'], emoji: '🏛️' },
@@ -270,7 +270,7 @@ const MEDICAL_QUESTIONS: InterestQuestion[] = [
   },
   {
     id: 'med-nonclinical',
-    prompt: 'Which non-clinical work would you still enjoy doing daily?',
+    prompt: 'Which other work would you still like doing every day?',
     options: [
       { label: 'Teaching students, residents and nurses', interests: ['teaching', 'medicine'], emoji: '🧑‍🏫' },
       { label: 'Running hospital operations and administration', interests: ['business', 'govt-service'], emoji: '📋' },
@@ -303,7 +303,7 @@ const MEDICAL_QUESTIONS: InterestQuestion[] = [
 const GRADUATE_QUESTIONS: InterestQuestion[] = [
   {
     id: 'grad-target',
-    prompt: 'You need a first job. Which target feels both realistic and right?',
+    prompt: 'You need a first job. Which goal feels right and possible?',
     options: [
       { label: 'IT services, support or operations roles', interests: ['coding', 'business'], emoji: '🖥️' },
       { label: 'Accounts, finance, banking and insurance', interests: ['business', 'govt-service'], emoji: '🏦' },
@@ -313,7 +313,7 @@ const GRADUATE_QUESTIONS: InterestQuestion[] = [
   },
   {
     id: 'grad-skill',
-    prompt: 'Which skill could you build in 12 weeks to change your hiring pool?',
+    prompt: 'Which skill could you learn in 12 weeks to get more job calls?',
     options: [
       { label: 'Data analysis — Python, SQL, spreadsheets', interests: ['coding', 'research'], emoji: '📊' },
       { label: 'Digital marketing, content and social media', interests: ['media', 'design'], emoji: '📣' },
@@ -323,7 +323,7 @@ const GRADUATE_QUESTIONS: InterestQuestion[] = [
   },
   {
     id: 'grad-env',
-    prompt: 'Which working environment suits you now?',
+    prompt: 'Which work place suits you now?',
     options: [
       { label: 'An office with targets and a clear promotion ladder', interests: ['business'], emoji: '📈' },
       { label: 'A government office with security and fixed hours', interests: ['govt-service'], emoji: '🛡️' },
@@ -343,7 +343,7 @@ const GRADUATE_QUESTIONS: InterestQuestion[] = [
   },
   {
     id: 'grad-employer',
-    prompt: 'Which employer do you want to end up with in five years?',
+    prompt: 'Which boss do you want in 5 years?',
     options: [
       { label: 'Government or PSU, even if the process is slow', interests: ['govt-service'], emoji: '🏛️' },
       { label: 'A large private company with brand value', interests: ['business', 'coding'], emoji: '🏢' },
@@ -366,7 +366,7 @@ const TEACHING_QUESTIONS: InterestQuestion[] = [
   },
   {
     id: 'bed-subject',
-    prompt: 'Which subject is your real strength?',
+    prompt: 'Which subject is your strongest?',
     options: [
       { label: 'Maths and science', interests: ['research', 'teaching'], emoji: '🧮' },
       { label: 'Languages and social science', interests: ['law', 'media', 'teaching'], emoji: '📖' },
@@ -386,7 +386,7 @@ const TEACHING_QUESTIONS: InterestQuestion[] = [
   },
   {
     id: 'bed-skill',
-    prompt: 'Which extra skill would you like to build along with teaching?',
+    prompt: 'Which extra skill would you like to learn with teaching?',
     options: [
       { label: 'Content, video lessons and storytelling', interests: ['media', 'design'], emoji: '🎬' },
       { label: 'Ed-tech tools and basic coding', interests: ['coding'], emoji: '⚙️' },
@@ -409,7 +409,7 @@ const TEACHING_QUESTIONS: InterestQuestion[] = [
 const POSTGRAD_QUESTIONS: InterestQuestion[] = [
   {
     id: 'pg-path',
-    prompt: 'After the masters, which path do you actually want?',
+    prompt: 'After your masters, which road do you truly want?',
     options: [
       { label: 'Lectureship / assistant professor through NET or SET', interests: ['teaching', 'research'], emoji: '🧑‍🏫' },
       { label: 'PhD and a full research career', interests: ['research', 'teaching'], emoji: '🔬' },
@@ -419,7 +419,7 @@ const POSTGRAD_QUESTIONS: InterestQuestion[] = [
   },
   {
     id: 'pg-leads',
-    prompt: 'What does your subject naturally lead you towards?',
+    prompt: 'What does your subject lead you towards?',
     options: [
       { label: 'Teaching and academics', interests: ['teaching', 'research'], emoji: '📚' },
       { label: 'Data, analytics and technology', interests: ['coding', 'research'], emoji: '📊' },
@@ -449,7 +449,7 @@ const POSTGRAD_QUESTIONS: InterestQuestion[] = [
   },
   {
     id: 'pg-employer',
-    prompt: 'Which employer do you want five years from now?',
+    prompt: 'Which boss do you want 5 years from now?',
     options: [
       { label: 'A university or research institute', interests: ['teaching', 'research'], emoji: '🎓' },
       { label: 'A government department or PSU', interests: ['govt-service'], emoji: '🏛️' },
