@@ -38,7 +38,7 @@ export const STAGE_QUIZ_GROUP: Record<QualificationId, InterestQuizGroup> = {
 const SCHOOL_QUESTIONS: InterestQuestion[] = [
   {
     id: 'weekend',
-    prompt: 'A free Sunday with no homework. What actually pulls you in?',
+    prompt: 'A free Sunday with no school work. What do you like doing most?',
     options: [
       { label: 'Fixing or building something with my hands', interests: ['hands-on'], emoji: '🔧' },
       { label: 'Trying a new app, game mod, or small program', interests: ['coding'], emoji: '💻' },
@@ -48,7 +48,7 @@ const SCHOOL_QUESTIONS: InterestQuestion[] = [
   },
   {
     id: 'subject',
-    prompt: 'Which school subject feels least like a burden?',
+    prompt: 'Which subject do you enjoy so much (or find so easy)?',
     options: [
       { label: 'Mathematics and Physics', interests: ['research', 'coding'], emoji: '🧮' },
       { label: 'Biology and Chemistry', interests: ['medicine', 'research'], emoji: '🧬' },
@@ -58,7 +58,7 @@ const SCHOOL_QUESTIONS: InterestQuestion[] = [
   },
   {
     id: 'worklife',
-    prompt: 'Which working picture appeals to you most?',
+    prompt: 'Which work picture do you like the most?',
     options: [
       { label: 'A desk, a laptop, solving technical puzzles', interests: ['coding', 'design'], emoji: '🧑‍💻' },
       { label: 'A hospital, clinic, or laboratory', interests: ['medicine'], emoji: '🏥' },
@@ -68,7 +68,7 @@ const SCHOOL_QUESTIONS: InterestQuestion[] = [
   },
   {
     id: 'stability',
-    prompt: 'What matters more to you personally?',
+    prompt: 'What matters most to you?',
     options: [
       { label: 'A predictable, secure government career', interests: ['govt-service', 'defence'], emoji: '🛡️' },
       { label: 'Fast growth and high pay in private industry', interests: ['coding', 'business'], emoji: '🚀' },
@@ -78,7 +78,7 @@ const SCHOOL_QUESTIONS: InterestQuestion[] = [
   },
   {
     id: 'environment',
-    prompt: 'Where and how do you want to live while you study?',
+    prompt: 'Where do you want to live while you study?',
     options: [
       { label: 'Stay at home, study in my own city or state', interests: ['govt-service', 'agriculture'], emoji: '🏠' },
       { label: 'Move anywhere in India for the best college', interests: ['research', 'coding', 'medicine'], emoji: '🚆' },
@@ -91,7 +91,7 @@ const SCHOOL_QUESTIONS: InterestQuestion[] = [
 const SENIOR_QUESTIONS: InterestQuestion[] = [
   {
     id: 'senior-focus',
-    prompt: 'Boards are close. Which part of your syllabus do you actually not mind?',
+    prompt: 'Boards are near. Which part of your course do you not mind studying?',
     options: [
       { label: 'Maths-heavy problem sets and derivations', interests: ['research', 'coding'], emoji: '🧮' },
       { label: 'Biology, diagrams and human body chapters', interests: ['medicine', 'research'], emoji: '🧬' },
@@ -101,7 +101,7 @@ const SENIOR_QUESTIONS: InterestQuestion[] = [
   },
   {
     id: 'senior-exam',
-    prompt: 'Which entrance exam would you genuinely enjoy preparing for?',
+    prompt: 'Which entrance exam would you like preparing for?',
     options: [
       { label: 'JEE / state engineering CET', interests: ['coding', 'research'], emoji: '⚙️' },
       { label: 'NEET and the health sciences', interests: ['medicine'], emoji: '🩺' },
@@ -111,7 +111,7 @@ const SENIOR_QUESTIONS: InterestQuestion[] = [
   },
   {
     id: 'senior-next',
-    prompt: 'What would make the next three or four years worth it?',
+    prompt: 'What would make the next 3–4 years worth it for you?',
     options: [
       { label: 'A degree that gets me a job quickly', interests: ['hands-on', 'coding', 'business'], emoji: '⚡' },
       { label: 'A profession with respect and stability', interests: ['govt-service', 'medicine', 'teaching'], emoji: '🛡️' },
@@ -121,7 +121,7 @@ const SENIOR_QUESTIONS: InterestQuestion[] = [
   },
   {
     id: 'senior-setting',
-    prompt: 'Which working setting feels most like you?',
+    prompt: 'Which work place feels most like you?',
     options: [
       { label: 'A site, workshop or plant floor', interests: ['hands-on'], emoji: '🏗️' },
       { label: 'A hospital, clinic or laboratory', interests: ['medicine', 'research'], emoji: '🏥' },
@@ -131,7 +131,7 @@ const SENIOR_QUESTIONS: InterestQuestion[] = [
   },
   {
     id: 'senior-family',
-    prompt: 'Honestly — what does your family expect from this decision?',
+    prompt: 'Tell the truth — what does your family expect from this choice?',
     options: [
       { label: 'A government job, whatever the field', interests: ['govt-service', 'defence'], emoji: '🏛️' },
       { label: 'A recognised professional degree (doctor, engineer, teacher, lawyer)', interests: ['medicine', 'teaching', 'law'], emoji: '🎓' },
@@ -144,7 +144,7 @@ const SENIOR_QUESTIONS: InterestQuestion[] = [
 const TECHNICAL_QUESTIONS: InterestQuestion[] = [
   {
     id: 'tech-workshop',
-    prompt: 'In the workshop or lab, what do you actually enjoy doing?',
+    prompt: 'In the workshop or lab, what do you enjoy doing?',
     options: [
       { label: 'Wiring, circuits and machines that run', interests: ['hands-on', 'defence'], emoji: '⚡' },
       { label: 'Precision work — fitting, welding, machining', interests: ['hands-on'], emoji: '🔧' },
@@ -154,7 +154,7 @@ const TECHNICAL_QUESTIONS: InterestQuestion[] = [
   },
   {
     id: 'tech-goal',
-    prompt: 'What is the real goal after this course?',
+    prompt: 'What is your real goal after this course?',
     options: [
       { label: 'A technician job in a plant, railway or PSU', interests: ['hands-on', 'govt-service'], emoji: '🏭' },
       { label: 'An apprenticeship with a real company', interests: ['hands-on', 'business'], emoji: '🧰' },
@@ -164,7 +164,7 @@ const TECHNICAL_QUESTIONS: InterestQuestion[] = [
   },
   {
     id: 'tech-sector',
-    prompt: 'Government or private — where do you want the first five years?',
+    prompt: 'Government or private — where do you want your first 5 years?',
     options: [
       { label: 'Government: railway, PSU, electricity board', interests: ['govt-service', 'defence'], emoji: '🏛️' },
       { label: 'A private company with visible promotions', interests: ['business', 'hands-on'], emoji: '📈' },
@@ -197,7 +197,7 @@ const TECHNICAL_QUESTIONS: InterestQuestion[] = [
 const DEGREE_QUESTIONS: InterestQuestion[] = [
   {
     id: 'deg-firstjob',
-    prompt: 'Two years left. Which line do you want your first job to be in?',
+    prompt: 'Two years left. Which line do you want your first job in?',
     options: [
       { label: 'Software, product or IT services', interests: ['coding'], emoji: '💻' },
       { label: 'Core engineering, plant and operations', interests: ['hands-on'], emoji: '🏭' },
@@ -207,7 +207,7 @@ const DEGREE_QUESTIONS: InterestQuestion[] = [
   },
   {
     id: 'deg-strength',
-    prompt: 'Which skill do you already enjoy enough to build proof in public?',
+    prompt: 'Which skill do you enjoy enough to show your work in public?',
     options: [
       { label: 'Building and shipping projects or apps', interests: ['coding', 'design'], emoji: '🚀' },
       { label: 'Solving data and puzzle problems', interests: ['research', 'coding'], emoji: '🧩' },
@@ -250,7 +250,7 @@ const DEGREE_QUESTIONS: InterestQuestion[] = [
 const MEDICAL_QUESTIONS: InterestQuestion[] = [
   {
     id: 'med-clinical',
-    prompt: 'In clinical postings, what actually engages you?',
+    prompt: 'In hospital work, what pulls you in the most?',
     options: [
       { label: 'Direct patient care, history-taking and diagnosis', interests: ['medicine'], emoji: '🩺' },
       { label: 'Procedures, surgery and hands-on skills', interests: ['medicine', 'hands-on'], emoji: '🔪' },
