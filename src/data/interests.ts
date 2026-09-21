@@ -93,7 +93,7 @@ const SENIOR_QUESTIONS: InterestQuestion[] = [
     id: 'senior-focus',
     prompt: 'Boards are near. Which part of your course do you not mind studying?',
     options: [
-      { label: 'Maths-heavy problem sets and derivations', interests: ['research', 'coding'], emoji: '🧮' },
+      { label: 'Maths sums and problem-solving', interests: ['research', 'coding'], emoji: '🧮' },
       { label: 'Biology, diagrams and human body chapters', interests: ['medicine', 'research'], emoji: '🧬' },
       { label: 'Accounts, business studies and economics', interests: ['business', 'law'], emoji: '🧾' },
       { label: 'History, political science and essays', interests: ['law', 'media', 'teaching'], emoji: '📜' },
@@ -209,7 +209,7 @@ const DEGREE_QUESTIONS: InterestQuestion[] = [
     id: 'deg-strength',
     prompt: 'Which skill do you enjoy enough to show your work in public?',
     options: [
-      { label: 'Building and shipping projects or apps', interests: ['coding', 'design'], emoji: '🚀' },
+      { label: 'Making and testing new apps or projects', interests: ['coding', 'design'], emoji: '🚀' },
       { label: 'Solving data and puzzle problems', interests: ['research', 'coding'], emoji: '🧩' },
       { label: 'Presenting, selling and leading a team', interests: ['business', 'media'], emoji: '🗣️' },
       { label: 'Designing things people actually use', interests: ['design'], emoji: '🎨' },
@@ -229,9 +229,9 @@ const DEGREE_QUESTIONS: InterestQuestion[] = [
     id: 'deg-workfeel',
     prompt: 'How should the daily work feel?',
     options: [
-      { label: 'Deep focus, few meetings, technical depth', interests: ['coding', 'research'], emoji: '🎧' },
+      { label: 'Deep focus, few meetings, deep tech work', interests: ['coding', 'research'], emoji: '🎧' },
       { label: 'Fast, varied, people-facing', interests: ['business', 'media'], emoji: '⚡' },
-      { label: 'Structured systems with clear rules', interests: ['govt-service', 'research'], emoji: '📋' },
+      { label: 'Set work with clear rules', interests: ['govt-service', 'research'], emoji: '📋' },
       { label: 'Creative freedom with deadlines', interests: ['design', 'media'], emoji: '🎬' },
     ],
   },
@@ -252,7 +252,7 @@ const MEDICAL_QUESTIONS: InterestQuestion[] = [
     id: 'med-clinical',
     prompt: 'In hospital work, what pulls you in the most?',
     options: [
-      { label: 'Direct patient care, history-taking and diagnosis', interests: ['medicine'], emoji: '🩺' },
+      { label: 'Talking to patients, checking them and finding the illness', interests: ['medicine'], emoji: '🩺' },
       { label: 'Procedures, surgery and hands-on skills', interests: ['medicine', 'hands-on'], emoji: '🔪' },
       { label: 'Labs, pathology and reading scans', interests: ['research', 'medicine'], emoji: '🔬' },
       { label: 'Camps, community health and public programmes', interests: ['medicine', 'govt-service'], emoji: '🚑' },
@@ -265,7 +265,7 @@ const MEDICAL_QUESTIONS: InterestQuestion[] = [
       { label: 'PG entrance — MD/MS in a clinical branch', interests: ['medicine', 'research'], emoji: '🎯' },
       { label: 'Government service — CMS, state medical officer', interests: ['govt-service', 'medicine'], emoji: '🏛️' },
       { label: 'Nursing officer or paramedical government post', interests: ['govt-service', 'medicine'], emoji: '🏥' },
-      { label: 'Allied route — MPH, hospital administration, research', interests: ['research', 'business'], emoji: '📊' },
+      { label: 'Other path — MPH, hospital work, research', interests: ['research', 'business'], emoji: '📊' },
     ],
   },
   {
@@ -411,9 +411,9 @@ const POSTGRAD_QUESTIONS: InterestQuestion[] = [
     id: 'pg-path',
     prompt: 'After your masters, which road do you truly want?',
     options: [
-      { label: 'Lectureship / assistant professor through NET or SET', interests: ['teaching', 'research'], emoji: '🧑‍🏫' },
+      { label: 'Teacher job through NET or SET exam', interests: ['teaching', 'research'], emoji: '🧑‍🏫' },
       { label: 'PhD and a full research career', interests: ['research', 'teaching'], emoji: '🔬' },
-      { label: 'Industry roles inside my subject domain', interests: ['business', 'research'], emoji: '🏢' },
+      { label: 'Company jobs in my own subject area', interests: ['business', 'research'], emoji: '🏢' },
       { label: 'Government or PSU specialist posts', interests: ['govt-service'], emoji: '🏛️' },
     ],
   },
@@ -441,10 +441,10 @@ const POSTGRAD_QUESTIONS: InterestQuestion[] = [
     id: 'pg-funding',
     prompt: 'What is the honest funding plan for the next three years?',
     options: [
-      { label: 'JRF or fellowship — study while earning', interests: ['research', 'teaching'], emoji: '💠' },
+      { label: 'JRF or paid study — learn while you earn', interests: ['research', 'teaching'], emoji: '💠' },
       { label: 'A job first, research part-time', interests: ['business', 'research'], emoji: '🕒' },
       { label: 'Government service through an exam', interests: ['govt-service'], emoji: '🏛️' },
-      { label: 'A corporate role with a much higher band', interests: ['business', 'coding'], emoji: '💼' },
+      { label: 'A company job with much better pay', interests: ['business', 'coding'], emoji: '💼' },
     ],
   },
   {
@@ -454,7 +454,7 @@ const POSTGRAD_QUESTIONS: InterestQuestion[] = [
       { label: 'A university or research institute', interests: ['teaching', 'research'], emoji: '🎓' },
       { label: 'A government department or PSU', interests: ['govt-service'], emoji: '🏛️' },
       { label: 'A private company in my domain', interests: ['business'], emoji: '🏢' },
-      { label: 'An international organisation, NGO or think tank', interests: ['govt-service', 'research'], emoji: '🌍' },
+      { label: 'A big world group, NGO or study group', interests: ['govt-service', 'research'], emoji: '🌍' },
     ],
   },
 ];
