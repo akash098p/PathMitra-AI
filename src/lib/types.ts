@@ -31,7 +31,10 @@ export type InterestId =
   | 'media'
   | 'law'
   | 'agriculture'
-  | 'teaching';
+  | 'teaching'
+  | 'creative-arts'
+  | 'performing-arts'
+  | 'defence-arts';
 
 export type BudgetBand = 'low' | 'medium' | 'high' | 'any';
 export type Mobility = 'home-only' | 'same-state' | 'anywhere';
