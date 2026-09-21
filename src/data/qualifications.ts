@@ -167,6 +167,21 @@ export const INTERESTS: Record<InterestId, { label: string; emoji: string; blurb
     emoji: '🧑‍🏫',
     blurb: 'Explaining ideas, training others, working with children.',
   },
+  'creative-arts': {
+    label: 'Creative & arts fields',
+    emoji: '🎭',
+    blurb: 'Fashion, modelling, creative design, illustration, styling.',
+  },
+  'performing-arts': {
+    label: 'Performing & entertainment',
+    emoji: '🎤',
+    blurb: 'Singing, dancing, stage, music, entertainment, audio-video.',
+  },
+  'defence-arts': {
+    label: 'Defence & armed forces, including arts',
+    emoji: '🎖️',
+    blurb: 'Army, Navy, Air Force — including music, dance and entertainment wings.',
+  },
 };
 
 export const INTEREST_LIST = Object.keys(INTERESTS) as InterestId[];
