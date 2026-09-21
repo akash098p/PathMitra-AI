@@ -38,6 +38,10 @@ interface Route {
   query?: string;
 }
 
+function getRouteKey(route: Route) {
+  return JSON.stringify([route.tab, route.sub ?? '', route.param ?? '', route.query ?? '']);
+}
+
 const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: 'home', label: 'Home', icon: <Home className="w-5 h-5" /> },
   { id: 'explore', label: 'Explore', icon: <Compass className="w-5 h-5" /> },
@@ -77,6 +81,7 @@ export default function PathMitraApp() {
   const [backStack, setBackStack] = useState<Route[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  const scrollPositions = useRef(new Map<string, number>());
 
   useEffect(() => {
     // Hydration gate: localStorage only exists after mount, so the first render
@@ -91,20 +96,35 @@ export default function PathMitraApp() {
   }, []);
 
   useEffect(() => {
-    contentRef.current?.scrollTo({ top: 0, behavior: 'auto' });
-  }, [route.tab, route.sub, route.param]);
+    const key = getRouteKey(route);
+    contentRef.current?.scrollTo({
+      top: scrollPositions.current.get(key) ?? 0,
+      behavior: 'auto',
+    });
+  }, [route]);
 
   function update(next: StudentProfile) {
     setProfile(next);
     saveProfile(next);
   }
 
+  function rememberCurrentScroll() {
+    scrollPositions.current.set(getRouteKey(route), contentRef.current?.scrollTop ?? 0);
+  }
+
+  function replaceRoute(nextRoute: Route) {
+    rememberCurrentScroll();
+    setRoute(nextRoute);
+  }
+
   function go(nextRoute: Route) {
+    rememberCurrentScroll();
     setBackStack((prev) => [...prev, route]);
     setRoute(nextRoute);
   }
 
   function back() {
+    rememberCurrentScroll();
     if (backStack.length === 0) {
       setRoute({ tab: 'home' });
       return;
@@ -119,6 +139,7 @@ export default function PathMitraApp() {
     if (route.tab === 'guide') {
       const sub = route.sub;
       const back = () => {
+        rememberCurrentScroll();
         const current = backStack[backStack.length - 1];
         setBackStack((stack) => stack.slice(0, -1));
         if (!current) {
@@ -218,7 +239,7 @@ export default function PathMitraApp() {
               }
               go({ tab: 'guide', sub: screen });
             }}
-            onOpenPathway={(id) => setRoute({ tab: 'explore', param: id })}
+            onOpenPathway={(id) => replaceRoute({ tab: 'explore', param: id })}
             back={back}
           />
         );
@@ -239,15 +260,15 @@ export default function PathMitraApp() {
       case 'advisor':
         return <AdvisorScreen profile={profile} initialQuestion={route.query} />;
       case 'profile':
-        return <ProfileScreen profile={profile} onUpdate={update} onRestart={() => setRoute({ tab: 'home' })} />;
+        return <ProfileScreen profile={profile} onUpdate={update} onRestart={() => replaceRoute({ tab: 'home' })} />;
       case 'profile-edit':
         return (
           <ProfileScreen
             profile={profile}
             onUpdate={update}
-            onRestart={() => setRoute({ tab: 'home' })}
+            onRestart={() => replaceRoute({ tab: 'home' })}
             hideAdvanced={true}
-            onClose={() => setRoute({ tab: 'home' })}
+            onClose={() => replaceRoute({ tab: 'home' })}
           />
         );
       default:
@@ -261,7 +282,7 @@ export default function PathMitraApp() {
         <Onboarding
           initial={profile}
           onComplete={(next) => update({ ...next, onboarded: true })}
-          onCancel={hydrated ? () => setRoute({ tab: 'home' }) : undefined}
+          onCancel={hydrated ? () => replaceRoute({ tab: 'home' }) : undefined}
         />
       </PhoneFrame>
     );
@@ -315,7 +336,7 @@ export default function PathMitraApp() {
                 <div className="relative flex items-center justify-center w-10 h-10 aspect-square shrink-0">
                   <div className="absolute inset-0 aspect-square rounded-full border-2 border-blue-500 shadow-[0_0_0_2px_rgba(59,130,246,0.25)] animate-[spin_4s_linear_infinite]" />
                   <button
-                    onClick={() => setRoute({ tab: 'profile-edit' })}
+                    onClick={() => replaceRoute({ tab: 'profile-edit' })}
                     aria-label="Open profile editor"
                     className="relative z-10 w-8 h-8 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-bold flex items-center justify-center"
                   >
@@ -335,7 +356,7 @@ export default function PathMitraApp() {
           return (
             <button
               key={tab.id}
-              onClick={() => setRoute({ tab: tab.id })}
+              onClick={() => replaceRoute({ tab: tab.id })}
               className={`relative flex flex-col items-center justify-end flex-1 min-h-[54px] py-1 rounded-2xl transition-all duration-300 ${
                 active ? 'text-indigo-700 bg-indigo-50/80' : 'text-slate-500 hover:text-slate-700'
               }`}
