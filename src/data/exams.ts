@@ -757,3 +757,106 @@ export function examsByIds(ids: string[]): Exam[] {
     .map((id) => findExam(id))
     .filter((e): e is Exam => Boolean(e));
 }
+
+// ===========================================================================
+// Exam search — powers the search box on the Entrance exams screen.
+// Matches against name, short name, category, conducting body and grants.
+// When nothing matches exactly, it still returns close/fuzzy "similar"
+// results (a typo like "jeen" surfaces "JEE Main"), so the list is never
+// dead-ended. Pure, dependency-free.
+// ===========================================================================
+
+export interface ExamSearchResult {
+  exams: Exam[];
+  /** True when results are fuzzy "similar" matches because nothing matched exactly. */
+  similar: boolean;
+}
+
+function levenshtein(a: string, b: string): number {
+  const m = a.length;
+  const n = b.length;
+  if (m === 0) return n;
+  if (n === 0) return m;
+  const prev = new Array<number>(n + 1).fill(0);
+  const curr = new Array<number>(n + 1).fill(0);
+  for (let j = 0; j <= n; j++) prev[j] = j;
+  for (let i = 1; i <= m; i++) {
+    curr[0] = i;
+    for (let j = 1; j <= n; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      curr[j] = Math.min(prev[j] + 1, curr[j - 1] + 1, prev[j - 1] + cost);
+    }
+    for (let j = 0; j <= n; j++) prev[j] = curr[j];
+  }
+  return prev[n];
+}
+
+const EXAM_SEARCH_FIELDS = ['name', 'shortName', 'category', 'conductedBy', 'grants'] as const;
+
+/**
+ * Ranked exam search.
+ * - Exact / starts-with matches rank highest (similarity: false).
+ * - When nothing matches exactly, returns closest fuzzy matches
+ *   (similar: true) using edit distance, so typos still surface results.
+ */
+export function searchExams(query: string, limit = 8): ExamSearchResult {
+  const q = (query || '').toLowerCase().trim();
+  if (!q) return { exams: [], similar: false };
+
+  const tokens = q.split(/\s+/).filter((t) => t.length > 1);
+  const scored: Array<{ exam: Exam; score: number }> = [];
+
+  for (const exam of EXAMS) {
+    const name = exam.name.toLowerCase();
+    const short = exam.shortName.toLowerCase();
+    const id = exam.id.toLowerCase();
+    let score = 0;
+    if (name === q) score += 20;
+    if (short === q) score += 18;
+    if (name.startsWith(q)) score += 12;
+    if (short.startsWith(q)) score += 10;
+    if (id === q) score += 15;
+    if (id.startsWith(q)) score += 8;
+    // substring presence in any searchable field
+    for (const field of EXAM_SEARCH_FIELDS)
+      if ((exam as unknown as Record<string, string>)[field]?.toLowerCase().includes(q)) score += 4;
+    // full token coverage: every query token appears somewhere in the record
+    if (tokens.length > 0) {
+      const haystack = `${name} ${short} ${id} ${EXAM_SEARCH_FIELDS.map((f) => (exam as unknown as Record<string, string>)[f]).join(' ')}`.toLowerCase();
+      if (tokens.every((t) => haystack.includes(t))) score += 6 + tokens.length;
+    }
+    if (score > 0) scored.push({ exam, score });
+  }
+
+  if (scored.length > 0) {
+    scored.sort((a, b) => b.score - a.score || a.exam.shortName.localeCompare(b.exam.shortName));
+    return { exams: scored.slice(0, limit).map((s) => s.exam), similar: false };
+  }
+
+    // No exact match → surface "similar" results via edit distance. To make typos
+  // land on the right exam (e.g. "jeen" → "JEE Main", "sssc" → "SSC CGL"), the
+  // distance is measured against the full name, the short name, the id, and every
+  // whitespace/hyphen/dot-separated token of those — short codes are the most
+  // forgiving match target for a typo'd query.
+  const fuzzy: Array<{ exam: Exam; dist: number }> = [];
+  const tokenSplit = (s: string) => s.toLowerCase().split(/[.\s\-_/]+/).filter(Boolean);
+  for (const exam of EXAMS) {
+    const targets: string[] = [
+      exam.name.toLowerCase(),
+      exam.shortName.toLowerCase(),
+      exam.id.toLowerCase(),
+      ...tokenSplit(exam.shortName),
+      ...tokenSplit(exam.id),
+    ];
+    let best = Infinity;
+    for (const target of targets) {
+      const d = levenshtein(q, target);
+      if (d < best) best = d;
+    }
+    fuzzy.push({ exam, dist: best });
+  }
+  fuzzy.sort((a, b) => a.dist - b.dist || a.exam.shortName.localeCompare(b.exam.shortName));
+  const threshold = Math.max(2, Math.floor(q.length / 3));
+  const similar = fuzzy.filter((f) => f.dist <= threshold).slice(0, Math.max(limit, 3));
+  return { exams: similar.map((f) => f.exam), similar: similar.length > 0 };
+}

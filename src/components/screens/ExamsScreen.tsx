@@ -2,11 +2,11 @@
 
 import React, { useState } from 'react';
 import { Heart } from 'lucide-react';
-import { EXAMS, findExam } from '@/data/exams';
+import { EXAMS, findExam, searchExams } from '@/data/exams';
 import { QUALIFICATIONS } from '@/data/qualifications';
 import { examsForStage, isExamCloseMatch } from '@/lib/stagematch';
 import type { StudentProfile } from '@/lib/types';
-import { Bullet, Card, Chip, EmptyState, KeyValue, LinkList, Meter, SectionTitle, Tag, VerificationNote } from '@/components/ui';
+import { Bullet, Card, Chip, EmptyState, KeyValue, LinkList, Meter, SectionTitle, Tag, VerificationNote, SearchInput } from '@/components/ui';
 
 // ============================================================================
 // Exam tracker — all-India and state entrance tests, with eligibility, what
@@ -94,6 +94,7 @@ export function ExamsScreen({
   onToggleSaved: (examId: string) => void;
 }) {
   const [filter, setFilter] = useState<'all' | 'national' | 'state' | 'mine'>('all');
+  const [query, setQuery] = useState('');
 
   const qualificationMeta = QUALIFICATIONS.find((q) => q.id === profile.qualification);
   // Stage-aware: "Open to me" is the level-appropriate list, closest first. It is
@@ -101,27 +102,46 @@ export function ExamsScreen({
   const mine = examsForStage(profile.qualification).filter((exam) =>
     isExamCloseMatch(exam, profile.qualification),
   );
-  const visible = (
-    filter === 'mine'
-      ? mine
-      : EXAMS.filter((exam) => {
-          if (filter === 'national') return exam.level === 'national';
-          if (filter === 'state') return exam.level === 'state';
-          return true;
-        })
-  ).sort((a, b) => a.shortName.localeCompare(b.shortName));
+  // A search query overrides the stage filter: the user is asking to "match the
+  // records" across the whole database, not just their stage.
+  const searchResult = query.trim().length >= 1 ? searchExams(query.trim(), 12) : null;
+  const visible = searchResult
+    ? searchResult.exams
+    : (filter === 'mine'
+        ? mine
+        : EXAMS.filter((exam) => {
+            if (filter === 'national') return exam.level === 'national';
+            if (filter === 'state') return exam.level === 'state';
+            return true;
+          })
+      ).sort((a, b) => a.shortName.localeCompare(b.shortName));
 
   return (
-    <div className="p-4 space-y-4">
-      <div>
-        <h2 className="text-sm font-bold text-slate-900">Entrance exams &amp; admission routes</h2>
+      <div className="p-4 space-y-4">
+        <div>
+          <h2 className="text-sm font-bold text-slate-900">Entrance exams &amp; admission routes</h2>
         <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
           {EXAMS.length} exams from NTA, UPSC, state boards and professional councils — with what each one actually
           unlocks.
         </p>
       </div>
 
-      <div className="flex flex-wrap gap-1.5">
+      <SearchInput
+        value={query}
+        onChange={setQuery}
+        placeholder="Search exams (e.g. JEE, NEET, state CET)"
+        ariaLabel="Search entrance exams"
+      />
+
+      {query.trim().length > 0 ? (
+        <p className="text-[10px] text-slate-500">
+          {searchResult?.similar
+            ? `No exact match for “${query}” — showing ${searchResult.exams.length} similar result${searchResult.exams.length === 1 ? '' : 's'}.`
+            : `Showing ${searchResult?.exams.length ?? 0} result${(searchResult?.exams.length ?? 0) === 1 ? '' : 's'} for “${query}”.`}
+        </p>
+      ) : null}
+
+      <div className="flex flex-wrap gap-1.5" hidden={query.trim().length > 0}>
         <Chip active={filter === 'all'} onClick={() => setFilter('all')}>
           All
         </Chip>
@@ -136,7 +156,12 @@ export function ExamsScreen({
         </Chip>
       </div>
 
-      {visible.length === 0 ? <EmptyState title="Nothing matches this filter" body="Try another filter." /> : null}
+      {visible.length === 0 ? (
+        <EmptyState
+          title={query.trim().length > 0 ? `No exams match “${query}”` : 'Nothing matches this filter'}
+          body={query.trim().length > 0 ? 'Try a broader term or check the spelling.' : 'Try another filter.'}
+        />
+      ) : null}
 
       <div className="space-y-2">
         {visible.map((exam) => (

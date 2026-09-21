@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Bell, ChevronLeft, ExternalLink, GraduationCap, ShieldCheck, Info } from 'lucide-react';
+import { Bell, ChevronLeft, ExternalLink, GraduationCap, Search, ShieldCheck, Info } from 'lucide-react';
 import type { Link } from '@/lib/types';
 
 // ============================================================================
@@ -313,6 +313,32 @@ export function EmptyState({ title, body }: { title: string; body: string }) {
       <h4 className="text-xs font-bold text-slate-900">{title}</h4>
       <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">{body}</p>
     </Card>
+  );
+}
+
+export function SearchInput({
+  value,
+  onChange,
+  placeholder = 'Search…',
+  ariaLabel,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  ariaLabel?: string;
+}) {
+  return (
+    <div className="relative">
+      <input
+        type="search"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        aria-label={ariaLabel ?? placeholder}
+        className="w-full pl-8 pr-3 py-2 text-[11px] text-slate-800 bg-slate-50 border border-slate-200 rounded-xl placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400"
+      />
+      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
+    </div>
   );
 }
 
