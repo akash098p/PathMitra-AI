@@ -41,16 +41,16 @@ const SCHOOL_QUESTIONS: InterestQuestion[] = [
     prompt: 'A free Sunday with no school work. What do you like doing most?',
     options: [
       { label: 'Fixing or building something with my hands', interests: ['hands-on'], emoji: '🔧' },
-      { label: 'Trying a new app, game mod, or small program', interests: ['coding'], emoji: '💻' },
-      { label: 'Drawing, editing videos, or designing posters', interests: ['design', 'media'], emoji: '🎨' },
-      { label: 'Reading about money, business, or a new scheme', interests: ['business'], emoji: '📈' },
+      { label: 'Making or trying a small program, game, or app', interests: ['coding'], emoji: '💻' },
+      { label: 'Drawing, styling, designing, or making videos', interests: ['design', 'creative-arts', 'media'], emoji: '🎨' },
+      { label: 'Learning about money, business, or a new scheme', interests: ['business'], emoji: '📈' },
     ],
   },
   {
     id: 'subject',
     prompt: 'Which subject do you enjoy so much (or find so easy)?',
     options: [
-      { label: 'Mathematics and Physics', interests: ['research', 'coding'], emoji: '🧮' },
+      { label: 'Maths and Physics', interests: ['research', 'coding'], emoji: '🧮' },
       { label: 'Biology and Chemistry', interests: ['medicine', 'research'], emoji: '🧬' },
       { label: 'History, Civics, and Languages', interests: ['law', 'govt-service', 'media'], emoji: '📜' },
       { label: 'Accounts, Economics, and Statistics', interests: ['business'], emoji: '🧾' },
@@ -58,12 +58,12 @@ const SCHOOL_QUESTIONS: InterestQuestion[] = [
   },
   {
     id: 'worklife',
-    prompt: 'Which work picture do you like the most?',
+    prompt: 'Which future life feels most like you so far?',
     options: [
-      { label: 'A desk, a laptop, solving technical puzzles', interests: ['coding', 'design'], emoji: '🧑‍💻' },
+      { label: 'A desk job or study desk solving technical puzzles, day and night', interests: ['coding', 'design'], emoji: '🧑‍💻' },
       { label: 'A hospital, clinic, or laboratory', interests: ['medicine'], emoji: '🏥' },
-      { label: 'A site, workshop, or factory floor', interests: ['hands-on'], emoji: '🏗️' },
-      { label: 'A court, office, or field posting for the country', interests: ['defence', 'govt-service', 'law'], emoji: '🏛️' },
+      { label: 'A workshop, factory floor, or a construction site', interests: ['hands-on'], emoji: '🏗️' },
+      { label: 'A stage, studio, runway, or armed forces campus life', interests: ['defence-arts', 'creative-arts', 'performing-arts'], emoji: '🎖️' },
     ],
   },
   {
@@ -73,7 +73,7 @@ const SCHOOL_QUESTIONS: InterestQuestion[] = [
       { label: 'A predictable, secure government career', interests: ['govt-service', 'defence'], emoji: '🛡️' },
       { label: 'Fast growth and high pay in private industry', interests: ['coding', 'business'], emoji: '🚀' },
       { label: 'Respect and the chance to serve people', interests: ['medicine', 'teaching', 'govt-service'], emoji: '🤝' },
-      { label: 'Freedom to create my own thing', interests: ['design', 'media', 'business'], emoji: '✨' },
+      { label: 'Freedom to create my own thing — fashion, music, media, events', interests: ['creative-arts', 'performing-arts', 'business'], emoji: '✨' },
     ],
   },
   {
@@ -81,9 +81,19 @@ const SCHOOL_QUESTIONS: InterestQuestion[] = [
     prompt: 'Where do you want to live while you study?',
     options: [
       { label: 'Stay at home, study in my own city or state', interests: ['govt-service', 'agriculture'], emoji: '🏠' },
-      { label: 'Move anywhere in India for the best college', interests: ['research', 'coding', 'medicine'], emoji: '🚆' },
-      { label: 'Outside in fields, plants, nature, animals', interests: ['agriculture', 'research'], emoji: '🌾' },
+      { label: 'Move anywhere in India for the best college or stage', interests: ['research', 'coding', 'medicine', 'defence'], emoji: '🚆' },
+      { label: 'Outdoors, a dance or music space, or an armed forces camp', interests: ['defence-arts', 'performing-arts', 'agriculture', 'hands-on'], emoji: '🌾' },
       { label: 'Somewhere I can train physically every day', interests: ['defence', 'hands-on'], emoji: '🏃' },
+    ],
+  },
+  {
+    id: 'creative-defence',
+    prompt: 'Which of these feels most exciting to you?',
+    options: [
+      { label: 'Fashion, modelling, or styling', interests: ['creative-arts'], emoji: '👗' },
+      { label: 'Singing, dancing, acting, or performing', interests: ['performing-arts'], emoji: '🎤' },
+      { label: 'Indian Army, Navy, or Air Force', interests: ['defence', 'defence-arts'], emoji: '🎖️' },
+      { label: 'Designing logos, posters, or clothes', interests: ['design', 'creative-arts'], emoji: '🎨' },
     ],
   },
 ];
@@ -139,6 +149,16 @@ const SENIOR_QUESTIONS: InterestQuestion[] = [
       { label: 'Whatever I choose, as long as I am serious', interests: ['research', 'design', 'media'], emoji: '🤝' },
     ],
   },
+  {
+    id: 'senior-creative',
+    prompt: 'If you had one free month, what would you try?',
+    options: [
+      { label: 'Fashion, modelling, or styling', interests: ['creative-arts'], emoji: '👗' },
+      { label: 'Singing, dancing, acting, or performing', interests: ['performing-arts'], emoji: '🎤' },
+      { label: 'Indian Army, Navy, or Air Force training', interests: ['defence', 'defence-arts'], emoji: '🎖️' },
+      { label: 'Designing posters, videos, or content', interests: ['design', 'creative-arts', 'media'], emoji: '🎨' },
+    ],
+  },
 ];
 
 const TECHNICAL_QUESTIONS: InterestQuestion[] = [
@@ -190,6 +210,16 @@ const TECHNICAL_QUESTIONS: InterestQuestion[] = [
       { label: 'Railway/PSU/defence workshops anywhere in India', interests: ['defence', 'govt-service'], emoji: '🚆' },
       { label: 'An IT or design office after upskilling', interests: ['coding', 'design'], emoji: '🖥️' },
       { label: 'Field work in energy, agriculture or infrastructure', interests: ['agriculture', 'hands-on'], emoji: '🌾' },
+    ],
+  },
+  {
+    id: 'tech-creative',
+    prompt: 'Which creative or service route interests you?',
+    options: [
+      { label: 'Fashion, tailoring, or modelling', interests: ['creative-arts'], emoji: '👗' },
+      { label: 'Music, dance, or stage performance', interests: ['performing-arts'], emoji: '🎤' },
+      { label: 'Army, Navy, or Air Force trades and bands', interests: ['defence', 'defence-arts'], emoji: '🎖️' },
+      { label: 'Interior design, styling or studio work', interests: ['design', 'creative-arts'], emoji: '🎨' },
     ],
   },
 ];
@@ -245,6 +275,16 @@ const DEGREE_QUESTIONS: InterestQuestion[] = [
       { label: 'Research lab or healthcare project', interests: ['research', 'medicine'], emoji: '🔬' },
     ],
   },
+  {
+    id: 'deg-creative',
+    prompt: 'Which side project would you start this month?',
+    options: [
+      { label: 'A fashion page, styling, or modelling portfolio', interests: ['creative-arts'], emoji: '👗' },
+      { label: 'A music, dance, or video channel', interests: ['performing-arts', 'media'], emoji: '🎤' },
+      { label: 'Army, Navy, or Air Force fitness and exam prep', interests: ['defence', 'defence-arts'], emoji: '🎖️' },
+      { label: 'A design, poster or art portfolio', interests: ['design', 'creative-arts'], emoji: '🎨' },
+    ],
+  },
 ];
 
 const MEDICAL_QUESTIONS: InterestQuestion[] = [
@@ -296,6 +336,16 @@ const MEDICAL_QUESTIONS: InterestQuestion[] = [
       { label: 'A private hospital or my own clinic', interests: ['medicine', 'business'], emoji: '🏪' },
       { label: 'A research institute or global health body', interests: ['research', 'govt-service'], emoji: '🌍' },
       { label: 'A pharma, health-tech or health NGO leadership role', interests: ['business', 'research'], emoji: '💊' },
+    ],
+  },
+  {
+    id: 'med-creative',
+    prompt: 'Outside medicine, what would you love to keep doing?',
+    options: [
+      { label: 'Fashion, styling, or modelling', interests: ['creative-arts'], emoji: '👗' },
+      { label: 'Singing, dancing, or performing', interests: ['performing-arts'], emoji: '🎤' },
+      { label: 'Armed forces medical or nursing service', interests: ['defence', 'defence-arts', 'medicine'], emoji: '🎖️' },
+      { label: 'Art, design or content creation', interests: ['design', 'media'], emoji: '🎨' },
     ],
   },
 ];
@@ -351,6 +401,16 @@ const GRADUATE_QUESTIONS: InterestQuestion[] = [
       { label: 'My own practice, agency, shop or farm', interests: ['business', 'agriculture'], emoji: '🏪' },
     ],
   },
+  {
+    id: 'grad-creative',
+    prompt: 'If income were not a worry for one year, what would you do?',
+    options: [
+      { label: 'Fashion, modelling, or styling work', interests: ['creative-arts'], emoji: '👗' },
+      { label: 'Singing, dancing, or performing full time', interests: ['performing-arts'], emoji: '🎤' },
+      { label: 'Army, Navy, or Air Force selection preparation', interests: ['defence', 'defence-arts'], emoji: '🎖️' },
+      { label: 'Design, art, or content creation work', interests: ['design', 'media'], emoji: '🎨' },
+    ],
+  },
 ];
 
 const TEACHING_QUESTIONS: InterestQuestion[] = [
@@ -402,6 +462,16 @@ const TEACHING_QUESTIONS: InterestQuestion[] = [
       { label: 'A senior teacher or coordinator role', interests: ['teaching', 'business'], emoji: '📈' },
       { label: 'M.Ed now, lecturer and research later', interests: ['research', 'teaching'], emoji: '🔬' },
       { label: 'My own coaching institute', interests: ['business', 'teaching'], emoji: '🏫' },
+    ],
+  },
+  {
+    id: 'bed-creative',
+    prompt: 'Which subject would you love to teach beyond books?',
+    options: [
+      { label: 'Art, craft and fashion design', interests: ['creative-arts', 'design'], emoji: '👗' },
+      { label: 'Music, dance or theatre', interests: ['performing-arts'], emoji: '🎤' },
+      { label: 'Physical education and NCC', interests: ['defence', 'defence-arts'], emoji: '🎖️' },
+      { label: 'Media, photography or school magazine', interests: ['media', 'design'], emoji: '🎙️' },
     ],
   },
 ];
@@ -457,6 +527,16 @@ const POSTGRAD_QUESTIONS: InterestQuestion[] = [
       { label: 'A big world group, NGO or study group', interests: ['govt-service', 'research'], emoji: '🌍' },
     ],
   },
+  {
+    id: 'pg-creative',
+    prompt: 'Which creative or service direction would you take seriously?',
+    options: [
+      { label: 'Fashion, design research, or styling', interests: ['creative-arts'], emoji: '👗' },
+      { label: 'Music, dance or performing arts studies', interests: ['performing-arts'], emoji: '🎤' },
+      { label: 'Defence studies, NCC or armed forces research', interests: ['defence', 'defence-arts'], emoji: '🎖️' },
+      { label: 'Media research, art history or content', interests: ['media', 'design'], emoji: '🎙️' },
+    ],
+  },
 ];
 
 export const INTEREST_QUESTION_SETS: Record<InterestQuizGroup, InterestQuestion[]> = {
@@ -478,7 +558,7 @@ export function quizGroupFor(stage: string | '' | undefined): InterestQuizGroup 
   return STAGE_QUIZ_GROUP[stage as QualificationId] ?? 'school';
 }
 
-/** The 5 questions this stage should actually be asked. */
+/** The 6 questions this stage should actually be asked. */
 export function interestQuestionsFor(stage: string | '' | undefined): InterestQuestion[] {
   return INTEREST_QUESTION_SETS[quizGroupFor(stage)];
 }
