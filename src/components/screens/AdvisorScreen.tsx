@@ -57,22 +57,11 @@ export function AdvisorScreen({
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
+  const sendRef = useRef<(prompt?: string) => void>(() => undefined);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
-
-  // Pre-seed an advisor question when the screen is opened with one (e.g. from the
-  // exams search "no match → ask advisor" link). We only act on the very first
-  // render so a re-render of the parent does not keep replaying the question.
-  const firstRender = useRef(true);
-  useEffect(() => {
-    if (firstRender.current && initialQuestion?.trim()) {
-      firstRender.current = false;
-      setInput(initialQuestion.trim());
-      send(initialQuestion.trim());
-    }
-  }, [initialQuestion]);
 
   async function send(prompt?: string) {
     const text = (prompt ?? input).trim();
@@ -120,6 +109,22 @@ export function AdvisorScreen({
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    sendRef.current = send;
+  });
+
+  // Pre-seed an advisor question when the screen is opened with one (e.g. from the
+  // exams search "no match → ask advisor" link). We only act on the very first
+  // render so a re-render of the parent does not keep replaying the question.
+  const firstRender = useRef(true);
+  useEffect(() => {
+    if (firstRender.current && initialQuestion?.trim()) {
+      firstRender.current = false;
+      setInput(initialQuestion.trim());
+      sendRef.current(initialQuestion.trim());
+    }
+  }, [initialQuestion]);
 
   const contextSummary = describeProfile(profile);
   return (
