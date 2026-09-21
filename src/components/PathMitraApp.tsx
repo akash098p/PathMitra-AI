@@ -82,6 +82,7 @@ export default function PathMitraApp() {
   const [hydrated, setHydrated] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const scrollPositions = useRef(new Map<string, number>());
+  const pendingScrollTop = useRef<number | null>(null);
 
   useEffect(() => {
     // Hydration gate: localStorage only exists after mount, so the first render
@@ -96,9 +97,10 @@ export default function PathMitraApp() {
   }, []);
 
   useEffect(() => {
-    const key = getRouteKey(route);
+    const top = pendingScrollTop.current ?? 0;
+    pendingScrollTop.current = null;
     contentRef.current?.scrollTo({
-      top: scrollPositions.current.get(key) ?? 0,
+      top,
       behavior: 'auto',
     });
   }, [route]);
@@ -113,12 +115,13 @@ export default function PathMitraApp() {
   }
 
   function replaceRoute(nextRoute: Route) {
-    rememberCurrentScroll();
+    pendingScrollTop.current = null;
     setRoute(nextRoute);
   }
 
   function go(nextRoute: Route) {
     rememberCurrentScroll();
+    pendingScrollTop.current = null;
     setBackStack((prev) => [...prev, route]);
     setRoute(nextRoute);
   }
@@ -126,10 +129,12 @@ export default function PathMitraApp() {
   function back() {
     rememberCurrentScroll();
     if (backStack.length === 0) {
+      pendingScrollTop.current = 0;
       setRoute({ tab: 'home' });
       return;
     }
     const prev = backStack[backStack.length - 1];
+    pendingScrollTop.current = scrollPositions.current.get(getRouteKey(prev)) ?? 0;
     setBackStack((stack) => stack.slice(0, -1));
     setRoute(prev);
   }
@@ -143,9 +148,11 @@ export default function PathMitraApp() {
         const current = backStack[backStack.length - 1];
         setBackStack((stack) => stack.slice(0, -1));
         if (!current) {
+          pendingScrollTop.current = 0;
           setRoute({ tab: 'home' });
           return;
         }
+        pendingScrollTop.current = scrollPositions.current.get(getRouteKey(current)) ?? 0;
         setRoute(current);
       };
 
