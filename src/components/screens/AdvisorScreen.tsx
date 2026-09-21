@@ -41,7 +41,13 @@ const QUICK_PROMPTS = [
   'How do I prepare for JEXPO and what does it open?',
 ];
 
-export function AdvisorScreen({ profile }: { profile: StudentProfile }) {
+export function AdvisorScreen({
+  profile,
+  initialQuestion,
+}: {
+  profile: StudentProfile;
+  initialQuestion?: string;
+}) {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       sender: 'ai',
@@ -55,6 +61,18 @@ export function AdvisorScreen({ profile }: { profile: StudentProfile }) {
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Pre-seed an advisor question when the screen is opened with one (e.g. from the
+  // exams search "no match → ask advisor" link). We only act on the very first
+  // render so a re-render of the parent does not keep replaying the question.
+  const firstRender = useRef(true);
+  useEffect(() => {
+    if (firstRender.current && initialQuestion?.trim()) {
+      firstRender.current = false;
+      setInput(initialQuestion.trim());
+      send(initialQuestion.trim());
+    }
+  }, [initialQuestion]);
 
   async function send(prompt?: string) {
     const text = (prompt ?? input).trim();

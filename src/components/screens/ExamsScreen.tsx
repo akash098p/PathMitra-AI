@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Heart } from 'lucide-react';
 import { EXAMS, findExam, searchExams } from '@/data/exams';
 import { QUALIFICATIONS } from '@/data/qualifications';
@@ -88,13 +88,22 @@ export function ExamsScreen({
   profile,
   onOpenExam,
   onToggleSaved,
+  openAdvisor,
 }: {
   profile: StudentProfile;
   onOpenExam: (examId: string) => void;
   onToggleSaved: (examId: string) => void;
+  openAdvisor?: (question: string) => void;
 }) {
   const [filter, setFilter] = useState<'all' | 'national' | 'state' | 'mine'>('all');
   const [query, setQuery] = useState('');
+
+  const openAdvisorWithQuery = useCallback(
+    (q: string) => {
+      if (openAdvisor) openAdvisor(q);
+    },
+    [openAdvisor],
+  );
 
   const qualificationMeta = QUALIFICATIONS.find((q) => q.id === profile.qualification);
   // Stage-aware: "Open to me" is the level-appropriate list, closest first. It is
@@ -117,9 +126,9 @@ export function ExamsScreen({
       ).sort((a, b) => a.shortName.localeCompare(b.shortName));
 
   return (
-      <div className="p-4 space-y-4">
-        <div>
-          <h2 className="text-sm font-bold text-slate-900">Entrance exams &amp; admission routes</h2>
+    <div className="p-4 space-y-4">
+      <div>
+        <h2 className="text-sm font-bold text-slate-900">Entrance exams &amp; admission routes</h2>
         <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
           {EXAMS.length} exams from NTA, UPSC, state boards and professional councils — with what each one actually
           unlocks.
@@ -157,10 +166,43 @@ export function ExamsScreen({
       </div>
 
       {visible.length === 0 ? (
-        <EmptyState
-          title={query.trim().length > 0 ? `No exams match “${query}”` : 'Nothing matches this filter'}
-          body={query.trim().length > 0 ? 'Try a broader term or check the spelling.' : 'Try another filter.'}
-        />
+        <>
+          <EmptyState
+            title={query.trim().length > 0 ? `No exams match “${query}”` : 'Nothing matches this filter'}
+            body={query.trim().length > 0 ? 'Try a broader term or check the spelling.' : 'Try another filter.'}
+          />
+          {query.trim().length > 0 && openAdvisorWithQuery ? (
+            <Card className="text-center">
+              <p className="text-[10px] text-slate-500 leading-relaxed mb-2">
+                {searchResult?.similar && searchResult.exams.length > 0
+                  ? `No exact exam for “${query}”, but here are the closest matches in this app’s dataset — and the advisor can point you at similar real exams too.`
+                  : `This exam isn’t in the dataset yet. Ask the advisor — it will answer from the verified guide and any live AI helper, and cite the exact exam you searched for.`}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  const q = query.trim();
+                  const similar = (searchResult?.similar && searchResult.exams.length > 0)
+                    ? searchResult.exams.slice(0, 4).map((e) => e.shortName)
+                    : [];
+                  const similarLine = similar.length > 0
+                    ? `\n\nClosest exams already in this app’s dataset: ${similar.join(', ')}.`
+                    : '';
+                  const question = [
+                    `Tell me about the entrance exam “${q}” — who conducts it, the syllabus, eligibility, what it unlocks, the usual cycle window, difficulty, preparation time and the official portal.`,
+                    `If “${q}” is not a separate exam, tell me the real route to it and the existing exams I should prepare for instead, and name similar exams I can look up here.`,
+                    `Keep it concise and professional.`,
+                    similarLine,
+                  ].filter(Boolean).join('\n');
+                  openAdvisorWithQuery(question);
+                }}
+                className="w-full px-3 py-2 text-[11px] font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl border border-indigo-600 transition"
+              >
+                Ask the Advisor about this exam
+              </button>
+            </Card>
+          ) : null}
+        </>
       ) : null}
 
       <div className="space-y-2">

@@ -34,6 +34,8 @@ interface Route {
   tab: Tab;
   sub?: string;
   param?: string;
+  /** Optional pre-seeded advisor question, used by screens that deep-link into chat. */
+  query?: string;
 }
 
 const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
@@ -156,6 +158,7 @@ export default function PathMitraApp() {
                 profile={profile}
                 onOpenExam={(id) => go({ tab: 'guide', sub: 'exams', param: id })}
                 onToggleSaved={(id) => update(toggleSavedExam(profile, id))}
+                openAdvisor={(question) => go({ tab: 'advisor', query: question })}
               />
             );
           case 'careers':
@@ -234,7 +237,7 @@ export default function PathMitraApp() {
           />
         );
       case 'advisor':
-        return <AdvisorScreen profile={profile} />;
+        return <AdvisorScreen profile={profile} initialQuestion={route.query} />;
       case 'profile':
         return <ProfileScreen profile={profile} onUpdate={update} onRestart={() => setRoute({ tab: 'home' })} />;
       case 'profile-edit':
