@@ -189,6 +189,23 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ---
 
+## 🧑‍💻 Contact
+
+**Akash Pramanik**
+
+<p>
+  <strong>For questions or support: </strong>
+<a href="https://instagram.com/akash.098p" target="_blank">
+  <img src="https://img.shields.io/badge/akash.098p-E4405F?style=flat&logo=instagram&logoColor=white"/>
+</a>
+
+<a href="mailto:akashpramanik098@gmail.com">
+  <img src="https://img.shields.io/badge/akashpramanik422%40gmail.com-D14836?style=flat&logo=gmail&logoColor=white"/>
+</a>
+</p>
+
+---
+
 ## 📄 License
 
 PathMitra AI is provided for educational and personal guidance purposes. The bundled datasets (exam dates, fees, eligibility, scholarship rules, pay bands) are compiled from publicly available government and institutional sources and are **not** an official admissions or employment authority — always verify on the linked official portals.
