@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { Bell, ChevronLeft, ExternalLink, GraduationCap, Search, ShieldCheck, Info } from 'lucide-react';
 import type { Link } from '@/lib/types';
 
@@ -60,8 +61,14 @@ export function ScreenHeader({
               <ChevronLeft className="w-4 h-4" />
             </button>
           ) : (
-            <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center shadow-sm">
-              <GraduationCap className="w-4 h-4 text-white" />
+            <div className="w-9 h-9 rounded-xl overflow-hidden bg-white shadow-sm border border-indigo-100">
+              <Image
+                src="/app%20logo.png"
+                alt="PathMitra AI logo"
+                width={36}
+                height={36}
+                className="h-full w-full object-cover"
+              />
             </div>
           )}
 

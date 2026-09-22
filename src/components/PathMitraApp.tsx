@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { Bot, Compass, Home, Map as MapIcon, User } from 'lucide-react';
 import { Onboarding } from '@/components/Onboarding';
 import { HomeScreen } from '@/components/screens/HomeScreen';
