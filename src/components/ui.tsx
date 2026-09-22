@@ -61,13 +61,13 @@ export function ScreenHeader({
               <ChevronLeft className="w-4 h-4" />
             </button>
           ) : (
-            <div className="w-9 h-9 rounded-xl overflow-hidden bg-white shadow-sm border border-indigo-100 flex items-center justify-center">
+            <div className="flex items-center justify-center w-12 h-10 shrink-0 overflow-visible">
               <Image
                 src="/app%20logo.png"
                 alt="PathMitra AI logo"
-                width={36}
-                height={36}
-                className="h-full w-full object-contain p-0.5"
+                width={52}
+                height={52}
+                className="h-11 w-auto object-contain"
               />
             </div>
           )}
