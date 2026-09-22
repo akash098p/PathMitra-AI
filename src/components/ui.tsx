@@ -65,9 +65,9 @@ export function ScreenHeader({
               <Image
                 src="/app%20logo.png"
                 alt="PathMitra AI logo"
-                width={52}
-                height={52}
-                className="h-11 w-auto object-contain"
+                width={60}
+                height={60}
+                className="h-12 w-auto object-contain"
               />
             </div>
           )}
@@ -316,7 +316,15 @@ export function Toggle({
 export function EmptyState({ title, body }: { title: string; body: string }) {
   return (
     <Card className="text-center">
-      <div className="text-3xl mb-2">🧭</div>
+      <div className="mb-2 flex justify-center">
+        <Image
+          src="/app%20logo.png"
+          alt="PathMitra logo"
+          width={56}
+          height={56}
+          className="h-12 w-auto object-contain"
+        />
+      </div>
       <h4 className="text-xs font-bold text-slate-900">{title}</h4>
       <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">{body}</p>
     </Card>
