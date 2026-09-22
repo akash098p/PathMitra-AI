@@ -7,6 +7,8 @@ PathMitra AI is a practical **education-to-career guidance** app for Indian stud
 
 The product is built around one principle: **explain trade-offs clearly instead of pushing every student toward the same path.**
 
+👉👉 [Live Preview](https://pathmitra-ai.vercel.app/) 👈👈
+
 ## ✨ What It Includes
 
 | Emoji | Feature | Description |
